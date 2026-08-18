@@ -79,7 +79,7 @@ export default function ContactHostContent() {
                 </div>
                 <div>
                   <p className="font-medium">{brand.hostName}</p>
-                  <p className="text-sm text-muted">{brand.hostTitle} · Typically responds within 2 hours</p>
+                  <p className="text-sm text-muted">{brand.hostTitle} · Typically responds within 2 hrs</p>
                 </div>
               </div>
             </Card>
