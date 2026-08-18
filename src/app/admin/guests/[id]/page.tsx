@@ -11,6 +11,11 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+export async function generateStaticParams() {
+  const { guests } = await import("@/data/mock/admin");
+  return guests.map((guest) => ({ id: guest.id }));
+}
+
 export default async function AdminGuestDetailPage({ params }: Props) {
   const { id } = await params;
   const guest = getGuestById(id);
