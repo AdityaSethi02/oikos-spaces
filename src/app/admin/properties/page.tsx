@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { properties } from "@/data/mock/properties";
 import { getUpcomingBookings } from "@/data/mock/bookings";
 import { formatCurrency } from "@/lib/utils";
@@ -44,9 +43,9 @@ export default function AdminPropertiesPage() {
                   Upcoming: {next ? `${next.guestName} · ${next.checkIn}` : "None"}
                 </p>
               </div>
-              <Link href={`/admin/properties/${p.id}`}>
-                <Button variant="outline" size="sm">Edit</Button>
-              </Link>
+              <ButtonLink href={`/admin/properties/${p.id}`} variant="outline" size="sm">
+                Edit
+              </ButtonLink>
             </div>
           );
         })}

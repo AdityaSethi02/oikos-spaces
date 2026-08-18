@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 interface PropertyGalleryProps {
@@ -20,9 +21,8 @@ export function PropertyGallery({
 
   return (
     <>
-      {/* Desktop bento grid */}
       <div className="relative hidden md:block">
-        <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[420px] lg:h-[480px]">
+        <div className="grid h-[420px] grid-cols-4 grid-rows-2 gap-2 lg:h-[480px]">
           <div className="col-span-2 row-span-2 overflow-hidden rounded-l-xl">
             <ImagePlaceholder variant="gallery" className="h-full rounded-none rounded-l-xl" label={`${propertyName} — Main`} />
           </div>
@@ -47,14 +47,14 @@ export function PropertyGallery({
           ))}
         </div>
         <button
+          type="button"
           onClick={() => setShowAll(true)}
-          className="absolute bottom-4 right-4 flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium shadow-soft hover:bg-background"
+          className="absolute bottom-4 right-4 flex min-h-11 items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium shadow-soft hover:bg-background"
         >
           View all {galleryCount} photos
         </button>
       </div>
 
-      {/* Mobile swipe gallery */}
       <div className="relative md:hidden">
         <div
           className="relative overflow-hidden rounded-xl"
@@ -79,16 +79,18 @@ export function PropertyGallery({
             size="sm"
             onClick={() => setMobileIndex(Math.max(0, mobileIndex - 1))}
             disabled={mobileIndex === 0}
+            aria-label="Previous photo"
           >
-            ‹
+            <Icons.ChevronLeft className="h-5 w-5" />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setMobileIndex(Math.min(galleryCount - 1, mobileIndex + 1))}
             disabled={mobileIndex === galleryCount - 1}
+            aria-label="Next photo"
           >
-            ›
+            <Icons.ChevronRight className="h-5 w-5" />
           </Button>
         </div>
         <Button

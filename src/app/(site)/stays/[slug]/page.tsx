@@ -8,6 +8,7 @@ import { PropertyActions } from "@/components/property/property-actions";
 import { StarRating, PropertyMeta } from "@/components/property/property-meta";
 import { getPropertyBySlug } from "@/data/mock/properties";
 import { getReviewsByPropertyId } from "@/data/mock/reviews";
+import { Icons } from "@/components/icons";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -50,7 +51,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             </h1>
             <p className="mt-1 text-muted">{property.location}</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
             <StarRating rating={property.rating} reviewCount={property.reviewCount} size="md" />
             <PropertyActions propertyId={property.id} propertyName={property.name} />
           </div>
@@ -125,7 +126,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             <ul className="mt-4 space-y-2">
               {property.included.map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm text-muted">
-                  <span className="text-accent">✓</span> {item}
+                  <Icons.Check className="h-4 w-4 shrink-0 text-accent" aria-hidden /> {item}
                 </li>
               ))}
             </ul>

@@ -9,12 +9,14 @@ import { getPropertyBySlug } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState } from "@/components/feedback/empty-state";
 import { formatCurrency, calculateBookingTotal, calculateNights } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import type { IconType } from "react-icons";
 
-const paymentMethods = [
-  { id: "upi", label: "UPI", icon: "📱" },
-  { id: "qr", label: "QR Code", icon: "📷" },
-  { id: "card", label: "Credit / Debit Card", icon: "💳" },
-  { id: "netbanking", label: "Net Banking", icon: "🏦" },
+const paymentMethods: { id: string; label: string; icon: IconType }[] = [
+  { id: "upi", label: "UPI", icon: Icons.Smartphone },
+  { id: "qr", label: "QR Code", icon: Icons.QrCode },
+  { id: "card", label: "Credit / Debit Card", icon: Icons.CreditCard },
+  { id: "netbanking", label: "Net Banking", icon: Icons.Landmark },
 ];
 
 export default function PaymentContent() {
@@ -76,7 +78,8 @@ export default function PaymentContent() {
           </div>
         )}
         <p className="mt-2 flex items-center gap-2 text-sm text-muted">
-          🔒 Secure payment · Razorpay integration coming soon
+          <Icons.Lock className="h-4 w-4" aria-hidden />
+          Secure payment · Razorpay integration coming soon
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -84,7 +87,9 @@ export default function PaymentContent() {
             <Card>
               <h2 className="font-serif text-xl">Payment method</h2>
               <div className="mt-6 space-y-3">
-                {paymentMethods.map((pm) => (
+                {paymentMethods.map((pm) => {
+                  const Icon = pm.icon;
+                  return (
                   <button
                     key={pm.id}
                     type="button"
@@ -95,10 +100,13 @@ export default function PaymentContent() {
                         : "border-border hover:border-foreground/30"
                     }`}
                   >
-                    <span className="text-xl" aria-hidden="true">{pm.icon}</span>
+                    <span className="text-accent" aria-hidden="true">
+                      <Icon className="h-5 w-5" />
+                    </span>
                     <span className="font-medium">{pm.label}</span>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </Card>
 

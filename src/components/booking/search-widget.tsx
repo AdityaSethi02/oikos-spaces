@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { brand } from "@/lib/brand";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 interface SearchWidgetProps {
@@ -31,7 +31,7 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-surface shadow-soft",
+        "relative z-10 rounded-xl border border-border bg-surface shadow-soft",
         variant === "hero" ? "p-3 sm:p-4" : "p-3",
         className,
       )}
@@ -50,7 +50,7 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Udaipur"
-            className="search-input"
+            className="search-input min-w-0"
           />
         </SearchField>
         <SearchField label="Check-in">
@@ -58,7 +58,7 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
             type="date"
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
-            className="search-input"
+            className="search-input min-w-0"
           />
         </SearchField>
         <SearchField label="Check-out">
@@ -66,14 +66,14 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
-            className="search-input"
+            className="search-input min-w-0"
           />
         </SearchField>
         <SearchField label="Guests">
           <select
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
-            className="search-input"
+            className="search-input min-w-0"
           >
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <option key={n} value={n}>
@@ -100,7 +100,7 @@ function SearchField({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-1">
+    <div className="min-w-0 space-y-1">
       <label className="block text-xs font-medium text-muted">{label}</label>
       {children}
     </div>
@@ -109,13 +109,12 @@ function SearchField({
 
 export function SearchBarCompact({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      <SearchWidget variant="inline" className="flex-1 min-w-[280px]" />
-      <Link href="/stays">
-        <Button variant="outline" size="sm">
-          Filters
-        </Button>
-      </Link>
+    <div className={cn("flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center", className)}>
+      <SearchWidget variant="inline" className="min-w-0 flex-1" />
+      <ButtonLink href="/stays" variant="outline" size="sm" className="shrink-0">
+        <Icons.Filter className="h-4 w-4" />
+        Filters
+      </ButtonLink>
     </div>
   );
 }

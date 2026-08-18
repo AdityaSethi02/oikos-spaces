@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Icons } from "@/components/icons";
 import { useToast } from "@/components/providers/toast-provider";
 
 export default function LoginContent() {
@@ -36,9 +37,11 @@ export default function LoginContent() {
 
           <div className="mt-8 space-y-3">
             <Button variant="outline" fullWidth className="gap-3" onClick={continueDemo}>
+              <Icons.Google className="h-4 w-4" />
               Continue with Google
             </Button>
             <Button variant="outline" fullWidth className="gap-3" onClick={continueDemo}>
+              <Icons.Apple className="h-4 w-4" />
               Continue with Apple
             </Button>
           </div>

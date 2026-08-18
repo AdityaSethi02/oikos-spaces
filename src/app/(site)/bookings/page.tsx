@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { BookingStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import {
@@ -83,17 +82,11 @@ export default function BookingsPage() {
                     <PaymentStatusBadge status={booking.paymentStatus} />
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2 sm:w-44 sm:flex-col">
-                  <Link href={`/bookings/${booking.id}`}>
-                    <Button variant="outline" size="sm" fullWidth>View booking</Button>
-                  </Link>
-                  <Link href="/messages/conv-2">
-                    <Button variant="ghost" size="sm" fullWidth>Message host</Button>
-                  </Link>
+                <div className="flex w-full flex-col gap-2 sm:w-44">
+                  <ButtonLink href={`/bookings/${booking.id}`} variant="outline" size="sm" fullWidth>View booking</ButtonLink>
+                  <ButtonLink href="/messages/conv-2" variant="ghost" size="sm" fullWidth>Message host</ButtonLink>
                   {(booking.bookingStatus === "payment_pending" || booking.bookingStatus === "confirmed") && (
-                    <Link href={`/bookings/${booking.id}#documents`}>
-                      <Button variant="ghost" size="sm" fullWidth>View / upload ID</Button>
-                    </Link>
+                    <ButtonLink href={`/bookings/${booking.id}#documents`} variant="ghost" size="sm" fullWidth>View / upload ID</ButtonLink>
                   )}
                   {booking.bookingStatus === "confirmed" && (
                     <Button variant="ghost" size="sm" fullWidth className="text-error" onClick={() => setCancelId(booking.id)}>

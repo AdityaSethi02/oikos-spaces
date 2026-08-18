@@ -1,20 +1,6 @@
+import { amenityIcons, Icons } from "@/components/icons";
 import type { Amenity } from "@/data/mock/properties";
 import { cn } from "@/lib/utils";
-
-const amenityIcons: Record<string, string> = {
-  "Wi-Fi": "📶",
-  Kitchen: "🍳",
-  Parking: "🅿️",
-  TV: "📺",
-  Workspace: "💻",
-  Balcony: "🌿",
-  "Air conditioning": "❄️",
-  "Hot water": "🚿",
-  "Self check-in": "🔑",
-  "Washing machine": "🧺",
-  Garden: "🌳",
-  "Rooftop terrace": "🏙️",
-};
 
 interface PropertyAmenitiesProps {
   amenities: Amenity[];
@@ -37,14 +23,17 @@ export function PropertyAmenities({
         className,
       )}
     >
-      {amenities.map((amenity) => (
-        <div key={amenity} className="flex items-center gap-3 text-sm text-foreground">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-light text-base">
-            {amenityIcons[amenity] || "✓"}
-          </span>
-          {amenity}
-        </div>
-      ))}
+      {amenities.map((amenity) => {
+        const Icon = amenityIcons[amenity] || Icons.Check;
+        return (
+          <div key={amenity} className="flex items-center gap-3 text-sm text-foreground">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-light text-accent">
+              <Icon className="h-4 w-4" aria-hidden />
+            </span>
+            {amenity}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -52,14 +41,18 @@ export function PropertyAmenities({
 export function AmenityPills({ amenities }: { amenities: string[] }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {amenities.slice(0, 5).map((a) => (
-        <span
-          key={a}
-          className="rounded-md bg-background px-2.5 py-1 text-xs text-muted"
-        >
-          {amenityIcons[a] || "✓"} {a}
-        </span>
-      ))}
+      {amenities.slice(0, 5).map((a) => {
+        const Icon = amenityIcons[a] || Icons.Check;
+        return (
+          <span
+            key={a}
+            className="inline-flex items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-xs text-muted"
+          >
+            <Icon className="h-3.5 w-3.5" aria-hidden />
+            {a}
+          </span>
+        );
+      })}
     </div>
   );
 }

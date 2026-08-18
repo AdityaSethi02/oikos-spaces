@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { brand } from "@/lib/brand";
 
 export const metadata = { title: "About Us" };
@@ -57,9 +56,9 @@ export default function AboutPage() {
             guests who seek beauty, culture, and genuine connection. Our properties are
             doorways into the rhythm of this remarkable city.
           </p>
-          <Link href="/stays" className="mt-8 inline-block">
-            <Button size="lg">Explore our homes</Button>
-          </Link>
+          <ButtonLink href="/stays" size="lg" className="mt-8">
+            Explore our homes
+          </ButtonLink>
         </div>
       </section>
     </div>

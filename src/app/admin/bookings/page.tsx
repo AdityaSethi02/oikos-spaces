@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { BookingStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
@@ -25,20 +24,16 @@ export default function AdminBookingsPage() {
 
   const Actions = ({ id, pending, compact }: { id: string; pending: boolean; compact?: boolean }) => (
     <div className={compact ? "mt-3 grid grid-cols-2 gap-2" : "flex flex-wrap gap-1"}>
-      <Link href={`/bookings/${id}`}>
-        <Button variant="ghost" size="sm">View</Button>
-      </Link>
-      <Link href="/admin/messages">
-        <Button variant="ghost" size="sm">Message</Button>
-      </Link>
+      <ButtonLink href={`/bookings/${id}`} variant="ghost" size="sm" fullWidth={compact}>View</ButtonLink>
+      <ButtonLink href="/admin/messages" variant="ghost" size="sm" fullWidth={compact}>Message</ButtonLink>
       {pending && (
-        <Button variant="ghost" size="sm" onClick={() => setAction({ type: "pay", id })}>Mark paid</Button>
+        <Button variant="ghost" size="sm" fullWidth={compact} onClick={() => setAction({ type: "pay", id })}>Mark paid</Button>
       )}
-      <Button variant="ghost" size="sm" onClick={() => setAction({ type: "confirm", id })}>Confirm</Button>
-      <Button variant="ghost" size="sm" onClick={() => setAction({ type: "in", id })}>Check in</Button>
-      <Button variant="ghost" size="sm" onClick={() => setAction({ type: "out", id })}>Check out</Button>
-      <Button variant="ghost" size="sm" onClick={() => setBlockOpen(true)}>Block dates</Button>
-      <Button variant="ghost" size="sm" className="text-error" onClick={() => setAction({ type: "cancel", id })}>Cancel</Button>
+      <Button variant="ghost" size="sm" fullWidth={compact} onClick={() => setAction({ type: "confirm", id })}>Confirm</Button>
+      <Button variant="ghost" size="sm" fullWidth={compact} onClick={() => setAction({ type: "in", id })}>Check in</Button>
+      <Button variant="ghost" size="sm" fullWidth={compact} onClick={() => setAction({ type: "out", id })}>Check out</Button>
+      <Button variant="ghost" size="sm" fullWidth={compact} onClick={() => setBlockOpen(true)}>Block dates</Button>
+      <Button variant="ghost" size="sm" fullWidth={compact} className="text-error" onClick={() => setAction({ type: "cancel", id })}>Cancel</Button>
     </div>
   );
 

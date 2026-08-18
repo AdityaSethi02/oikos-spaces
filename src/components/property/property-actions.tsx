@@ -1,7 +1,9 @@
 "use client";
 
+import { Icons } from "@/components/icons";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { useToast } from "@/components/providers/toast-provider";
+import { cn } from "@/lib/utils";
 
 export function PropertyActions({
   propertyId,
@@ -25,20 +27,25 @@ export function PropertyActions({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1 sm:gap-2">
       <button
         type="button"
         onClick={handleShare}
-        className="rounded-lg px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground"
       >
+        <Icons.Share className="h-4 w-4" aria-hidden />
         Share
       </button>
       <button
         type="button"
         onClick={() => toggleFavorite(propertyId)}
-        className="rounded-lg px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground"
+        className={cn(
+          "inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm hover:bg-background",
+          saved ? "text-red-500" : "text-muted hover:text-foreground",
+        )}
         aria-pressed={saved}
       >
+        <Icons.Heart className={cn("h-4 w-4", saved && "fill-current")} aria-hidden />
         {saved ? "Saved" : "Save"}
       </button>
     </div>

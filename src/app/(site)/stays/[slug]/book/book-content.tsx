@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getPropertyBySlug } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
+import { Icons } from "@/components/icons";
 
 export default function BookContent() {
   const params = useParams();
@@ -83,14 +84,16 @@ export default function BookContent() {
                   onSelect={() => setPaymentMethod("online")}
                   title="Pay online"
                   description="Secure payment via UPI, card, or net banking"
-                  icons="💳 UPI · Visa · Mastercard"
+                  icon={Icons.CreditCard}
+                  iconsLabel="UPI · Visa · Mastercard"
                 />
                 <PaymentOption
                   selected={paymentMethod === "direct"}
                   onSelect={() => setPaymentMethod("direct")}
                   title="Contact host / Pay directly"
                   description="Arrange payment via UPI or bank transfer with the host"
-                  icons="📱 UPI · Bank Transfer"
+                  icon={Icons.Smartphone}
+                  iconsLabel="UPI · Bank Transfer"
                 />
               </div>
             </Card>
@@ -123,13 +126,15 @@ function PaymentOption({
   onSelect,
   title,
   description,
-  icons,
+  icon: Icon,
+  iconsLabel,
 }: {
   selected: boolean;
   onSelect: () => void;
   title: string;
   description: string;
-  icons: string;
+  icon: typeof Icons.CreditCard;
+  iconsLabel: string;
 }) {
   return (
     <button
@@ -145,12 +150,15 @@ function PaymentOption({
             selected ? "border-foreground bg-foreground text-background" : "border-muted"
           }`}
         >
-          {selected && <span className="text-[10px]">✓</span>}
+          {selected && <Icons.Check className="h-3 w-3" />}
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="font-medium">{title}</p>
           <p className="mt-1 text-sm text-muted">{description}</p>
-          <p className="mt-2 text-xs text-muted-foreground">{icons}</p>
+          <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Icon className="h-3.5 w-3.5" aria-hidden />
+            {iconsLabel}
+          </p>
         </div>
       </div>
     </button>

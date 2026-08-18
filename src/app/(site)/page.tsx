@@ -1,18 +1,19 @@
-import Link from "next/link";
 import { SearchWidget } from "@/components/booking/search-widget";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { PropertyCard } from "@/components/property/property-card";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { properties } from "@/data/mock/properties";
 import { getReviewsByPropertyId } from "@/data/mock/reviews";
 import { brand } from "@/lib/brand";
 import { StarRating } from "@/components/property/property-meta";
+import { Icons } from "@/components/icons";
+import type { IconType } from "react-icons";
 
-const highlights = [
-  { icon: "🏠", label: "Entire Home", desc: "Private spaces, exclusively yours" },
-  { icon: "🔑", label: "Self Check-in", desc: "Flexible arrival on your schedule" },
-  { icon: "🅿️", label: "Free Parking", desc: "Complimentary parking at all properties" },
-  { icon: "📶", label: "Fast Wi-Fi", desc: "Reliable connectivity for work and leisure" },
+const highlights: { icon: IconType; label: string; desc: string }[] = [
+  { icon: Icons.House, label: "Entire Home", desc: "Private spaces, exclusively yours" },
+  { icon: Icons.Key, label: "Self Check-in", desc: "Flexible arrival on your schedule" },
+  { icon: Icons.Car, label: "Free Parking", desc: "Complimentary parking at all properties" },
+  { icon: Icons.Wifi, label: "Fast Wi-Fi", desc: "Reliable connectivity for work and leisure" },
 ];
 
 const whyStay = [
@@ -41,8 +42,8 @@ export default function HomePage() {
       <section className="relative">
         <div className="relative overflow-hidden">
           <ImagePlaceholder variant="hero" className="rounded-none min-h-[420px] sm:min-h-[520px]" label="Hero" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-          <div className="absolute inset-0 flex flex-col justify-end">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
             <div className="container-page pb-12 pt-24 sm:pb-16">
               <h1 className="max-w-2xl font-serif text-3xl text-white sm:text-4xl lg:text-5xl text-balance">
                 Boutique stays that feel like home.
@@ -53,7 +54,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="container-page relative -mt-16 sm:-mt-20">
+        <div className="container-page relative z-10 -mt-16 sm:-mt-20">
           <SearchWidget variant="hero" />
         </div>
       </section>
@@ -68,9 +69,7 @@ export default function HomePage() {
                 Three distinctive stays, each with its own character.
               </p>
             </div>
-            <Link href="/stays">
-              <Button variant="outline">View all stays</Button>
-            </Link>
+            <ButtonLink href="/stays" variant="outline">View all stays</ButtonLink>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
@@ -84,13 +83,16 @@ export default function HomePage() {
       <section className="border-y border-border bg-surface py-10">
         <div className="container-page">
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-            {highlights.map((h) => (
+            {highlights.map((h) => {
+              const Icon = h.icon;
+              return (
               <div key={h.label} className="text-center sm:text-left">
-                <span className="text-2xl" aria-hidden="true">{h.icon}</span>
+                <Icon className="mx-auto h-6 w-6 text-accent sm:mx-0" aria-hidden />
                 <p className="mt-2 font-medium text-foreground">{h.label}</p>
                 <p className="mt-1 text-sm text-muted">{h.desc}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -123,9 +125,9 @@ export default function HomePage() {
               Udaipur offers a rhythm of beauty and warmth. Our properties place you
               at the heart of it all — with the comfort of a home waiting at day&apos;s end.
             </p>
-            <Link href="/experiences" className="mt-6 inline-block">
-              <Button variant="outline">Explore experiences</Button>
-            </Link>
+            <ButtonLink href="/experiences" variant="outline" className="mt-6">
+              Explore experiences
+            </ButtonLink>
           </div>
         </div>
       </section>
@@ -162,11 +164,9 @@ export default function HomePage() {
           <p className="mx-auto mt-4 max-w-md text-background/70">
             Browse our homes, check availability, and book directly — online or with a personal touch.
           </p>
-          <Link href="/stays" className="mt-8 inline-block">
-            <Button variant="secondary" size="lg">
+          <ButtonLink href="/stays" variant="secondary" size="lg" className="mt-8">
               Explore stays
-            </Button>
-          </Link>
+            </ButtonLink>
         </div>
       </section>
     </>

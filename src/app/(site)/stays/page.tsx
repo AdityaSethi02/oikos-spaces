@@ -7,6 +7,7 @@ import { SearchWidget } from "@/components/booking/search-widget";
 import { Drawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/feedback/empty-state";
+import { Icons } from "@/components/icons";
 import { properties, type PropertyType } from "@/data/mock/properties";
 
 export default function StaysPage() {
@@ -75,6 +76,7 @@ export default function StaysPage() {
             onClick={() => setFiltersOpen(true)}
             className="shrink-0 lg:hidden"
           >
+            <Icons.Filter className="h-4 w-4" />
             Filters
           </Button>
         </div>

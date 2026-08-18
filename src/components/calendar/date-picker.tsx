@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 interface DatePickerProps {
@@ -115,7 +116,7 @@ export function DatePicker({
                   handleDayClick(day);
                 }}
                 className={cn(
-                  "relative flex h-9 w-full items-center justify-center rounded-full text-sm transition-colors",
+                  "relative flex h-11 w-full items-center justify-center rounded-full text-sm transition-colors sm:h-9",
                   isUnavailable && "text-muted-foreground/40 line-through cursor-not-allowed",
                   !isUnavailable && !isCheckIn && !isCheckOut && !inRange && "hover:bg-background",
                   inRange && "bg-accent-light/60 rounded-none",
@@ -158,18 +159,18 @@ export function DatePicker({
         <button
           type="button"
           onClick={prevMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-background"
+          className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-background"
           aria-label="Previous month"
         >
-          ‹
+          <Icons.ChevronLeft className="h-5 w-5" />
         </button>
         <button
           type="button"
           onClick={nextMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-background"
+          className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-background"
           aria-label="Next month"
         >
-          ›
+          <Icons.ChevronRight className="h-5 w-5" />
         </button>
       </div>
       <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">

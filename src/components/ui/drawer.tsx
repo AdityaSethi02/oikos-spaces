@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
+import { Icons } from "@/components/icons";
 
 interface DrawerProps {
   open: boolean;
   onClose: () => void;
   title?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   side?: "left" | "right";
   className?: string;
 }
@@ -47,22 +48,24 @@ export function Drawer({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "absolute top-0 flex h-full w-full max-w-sm flex-col bg-surface shadow-xl",
+          "absolute top-0 flex h-dvh w-full max-w-sm flex-col bg-surface shadow-xl",
+          "pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]",
           side === "right" ? "right-0" : "left-0",
           className,
         )}
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-border px-5 py-3">
           {title && <h2 className="font-serif text-lg">{title}</h2>}
           <button
+            type="button"
             onClick={onClose}
-            className="ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-background"
+            className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg text-muted hover:bg-background hover:text-foreground"
             aria-label="Close menu"
           >
-            ✕
+            <Icons.Close className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto">{children}</div>
+        <div className="flex-1 overflow-y-auto overscroll-contain">{children}</div>
       </div>
     </div>
   );

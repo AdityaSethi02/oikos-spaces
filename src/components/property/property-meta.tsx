@@ -1,3 +1,4 @@
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export function StarRating({
@@ -11,15 +12,13 @@ export function StarRating({
 }) {
   return (
     <div className="flex items-center gap-1.5">
-      <span
+      <Icons.Star
         className={cn(
-          "text-accent",
-          size === "sm" ? "text-sm" : "text-base",
+          "fill-accent text-accent",
+          size === "sm" ? "h-4 w-4" : "h-5 w-5",
         )}
-        aria-hidden="true"
-      >
-        ★
-      </span>
+        aria-hidden
+      />
       <span
         className={cn(
           "font-medium text-foreground",

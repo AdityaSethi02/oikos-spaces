@@ -6,7 +6,8 @@ import { useState } from "react";
 import { brand, navigation } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import { Drawer } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
 
 export function Header() {
   const pathname = usePathname();
@@ -15,10 +16,10 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/95 backdrop-blur-sm">
-        <div className="container-page flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+        <div className="container-page flex h-16 items-center justify-between gap-3 lg:h-[4.5rem]">
           <Link
             href="/"
-            className="flex flex-col leading-none"
+            className="min-w-0 flex flex-col leading-none"
             aria-label={`${brand.name} home`}
           >
             <span className="font-serif text-lg tracking-wide text-foreground sm:text-xl">
@@ -46,32 +47,31 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <Link
               href="/favorites"
-              className="hidden sm:flex h-10 w-10 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
               aria-label="Favorites"
             >
-              ♥
+              <Icons.Heart className="h-5 w-5" />
             </Link>
-            <Link href="/login" className="hidden sm:block">
-              <Button variant="outline" size="sm">
-                Sign in
-              </Button>
-            </Link>
+            <ButtonLink href="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
+              Sign in
+            </ButtonLink>
             <Link
               href="/bookings"
-              className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
+              className="hidden h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground md:flex"
               aria-label="Account"
             >
-              👤
+              <Icons.User className="h-5 w-5" />
             </Link>
             <button
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground lg:hidden"
+              type="button"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground hover:bg-surface lg:hidden"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >
-              ☰
+              <Icons.Menu className="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -110,13 +110,9 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            onClick={() => setMobileOpen(false)}
-            className="mt-4"
-          >
-            <Button fullWidth>Sign in</Button>
-          </Link>
+          <ButtonLink href="/login" fullWidth className="mt-4">
+            Sign in
+          </ButtonLink>
         </nav>
       </Drawer>
     </>

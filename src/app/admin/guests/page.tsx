@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { guests } from "@/data/mock/admin";
 import { getBookingsWithProperty } from "@/data/mock/bookings";
 
@@ -31,12 +30,8 @@ export default function AdminGuestsPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Link href={`/admin/guests/${guest.id}`}>
-                    <Button variant="outline" size="sm">View profile</Button>
-                  </Link>
-                  <Link href="/admin/messages">
-                    <Button variant="ghost" size="sm">Messages</Button>
-                  </Link>
+                  <ButtonLink href={`/admin/guests/${guest.id}`} variant="outline" size="sm">View profile</ButtonLink>
+                  <ButtonLink href="/admin/messages" variant="ghost" size="sm">Messages</ButtonLink>
                 </div>
               </div>
 

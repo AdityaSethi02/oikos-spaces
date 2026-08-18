@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import type { ReactNode } from "react";
 
 interface EmptyStateProps {
   title: string;
@@ -8,7 +9,7 @@ interface EmptyStateProps {
   actionLabel?: string;
   actionHref?: string;
   onAction?: () => void;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   className?: string;
 }
 
@@ -29,7 +30,7 @@ export function EmptyState({
       )}
     >
       {icon && (
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-2xl">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-accent">
           {icon}
         </div>
       )}
@@ -38,9 +39,9 @@ export function EmptyState({
         <p className="mt-2 max-w-sm text-sm text-muted">{description}</p>
       )}
       {actionLabel && actionHref && (
-        <Link href={actionHref} className="mt-6">
-          <Button>{actionLabel}</Button>
-        </Link>
+        <ButtonLink href={actionHref} className="mt-6">
+          {actionLabel}
+        </ButtonLink>
       )}
       {actionLabel && onAction && !actionHref && (
         <Button className="mt-6" onClick={onAction}>
@@ -76,7 +77,7 @@ export function ErrorState({
     <EmptyState
       title={title}
       description={description}
-      icon="⚠️"
+      icon={<Icons.Warning className="h-6 w-6" />}
       actionLabel={onRetry ? "Try again" : undefined}
       onAction={onRetry}
     />

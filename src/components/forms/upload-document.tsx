@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/providers/toast-provider";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 interface UploadDocumentProps {
@@ -22,6 +23,7 @@ export function UploadDocument({
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [failed, setFailed] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (f: File) => {
     const allowed = ["application/pdf", "image/jpeg", "image/png"];
@@ -61,28 +63,30 @@ export function UploadDocument({
           dragOver ? "border-accent bg-accent-light/30" : "border-border bg-background",
         )}
       >
-        <span className="text-3xl opacity-50" aria-hidden="true">
-          ☁️
-        </span>
+        <Icons.CloudUpload className="h-10 w-10 opacity-50" aria-hidden />
         <p className="mt-3 text-sm font-medium text-foreground">
           Drag and drop your file here
         </p>
         <p className="mt-1 text-xs text-muted">PDF, JPG, or PNG up to 10 MB</p>
-        <label className="mt-4 cursor-pointer">
-          <span className="sr-only">Choose file</span>
-          <input
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
-            className="sr-only"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleFile(f);
-            }}
-          />
-          <Button variant="outline" size="sm" type="button">
-            Browse files
-          </Button>
-        </label>
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          className="sr-only"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleFile(f);
+          }}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          type="button"
+          className="mt-4"
+          onClick={() => inputRef.current?.click()}
+        >
+          Browse files
+        </Button>
       </div>
 
       {failed && (
@@ -92,7 +96,9 @@ export function UploadDocument({
       {file && (
         <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-4">
           <div className="flex items-center gap-3">
-            <span className={failed ? "text-error" : "text-green-600"} aria-hidden="true">{failed ? "!" : "✓"}</span>
+            <span className={failed ? "text-error" : "text-green-600"} aria-hidden="true">
+              {failed ? <Icons.Alert className="h-5 w-5" /> : <Icons.Check className="h-5 w-5" />}
+            </span>
             <div>
               <p className="text-sm font-medium">{file.name}</p>
               <p className="text-xs text-muted">
@@ -101,11 +107,12 @@ export function UploadDocument({
             </div>
           </div>
           <button
+            type="button"
             onClick={() => {
               setFile(null);
               setFailed(false);
             }}
-            className="text-sm text-muted hover:text-error"
+            className="min-h-11 shrink-0 px-2 text-sm text-muted hover:text-error"
           >
             Remove
           </button>

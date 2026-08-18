@@ -32,7 +32,7 @@ export function ConversationList({
               key={f}
               onClick={() => onFilterChange(f)}
               className={cn(
-                "shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                "shrink-0 rounded-full px-3 py-2 text-xs font-medium transition-colors min-h-11",
                 activeFilter === f
                   ? "bg-foreground text-background"
                   : "bg-background text-muted hover:text-foreground",

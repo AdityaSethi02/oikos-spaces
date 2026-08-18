@@ -1,3 +1,4 @@
+import { placeholderIcons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export type PlaceholderVariant =
@@ -14,18 +15,18 @@ export type PlaceholderVariant =
 
 const variantStyles: Record<
   PlaceholderVariant,
-  { aspect: string; label: string; icon: string }
+  { aspect: string; label: string }
 > = {
-  hero: { aspect: "aspect-[21/9] sm:aspect-[2.4/1]", label: "Hero Image", icon: "🏡" },
-  property: { aspect: "aspect-[4/3]", label: "Property Image", icon: "🏠" },
-  gallery: { aspect: "aspect-[4/3]", label: "Gallery Image", icon: "📷" },
-  "gallery-sm": { aspect: "aspect-square", label: "Photo", icon: "📷" },
-  bedroom: { aspect: "aspect-[3/2]", label: "Bedroom", icon: "🛏️" },
-  bathroom: { aspect: "aspect-[3/2]", label: "Bathroom", icon: "🚿" },
-  lifestyle: { aspect: "aspect-[16/10]", label: "Lifestyle", icon: "✨" },
-  video: { aspect: "aspect-video", label: "Video Tour", icon: "▶" },
-  avatar: { aspect: "aspect-square", label: "", icon: "👤" },
-  map: { aspect: "aspect-[16/9]", label: "Map", icon: "📍" },
+  hero: { aspect: "aspect-[21/9] sm:aspect-[2.4/1]", label: "Hero Image" },
+  property: { aspect: "aspect-[4/3]", label: "Property Image" },
+  gallery: { aspect: "aspect-[4/3]", label: "Gallery Image" },
+  "gallery-sm": { aspect: "aspect-square", label: "Photo" },
+  bedroom: { aspect: "aspect-[3/2]", label: "Bedroom" },
+  bathroom: { aspect: "aspect-[3/2]", label: "Bathroom" },
+  lifestyle: { aspect: "aspect-[16/10]", label: "Lifestyle" },
+  video: { aspect: "aspect-video", label: "Video Tour" },
+  avatar: { aspect: "aspect-square", label: "" },
+  map: { aspect: "aspect-[16/9]", label: "Map" },
 };
 
 interface ImagePlaceholderProps {
@@ -40,6 +41,7 @@ export function ImagePlaceholder({
   label,
 }: ImagePlaceholderProps) {
   const style = variantStyles[variant];
+  const Icon = placeholderIcons[variant];
 
   return (
     <div
@@ -54,9 +56,7 @@ export function ImagePlaceholder({
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(166,124,82,0.08),transparent_50%)]" />
       <div className="relative flex flex-col items-center gap-2 text-muted">
-        <span className="text-2xl opacity-60" aria-hidden="true">
-          {style.icon}
-        </span>
+        <Icon className="h-7 w-7 opacity-60" aria-hidden />
         {(label || style.label) && (
           <span className="text-xs font-medium tracking-wide uppercase">
             {label || style.label}

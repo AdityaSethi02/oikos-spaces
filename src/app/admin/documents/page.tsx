@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { documents } from "@/data/mock/admin";
 import { useToast } from "@/components/providers/toast-provider";
+import { Icons } from "@/components/icons";
 
 export default function AdminDocumentsPage() {
   const { showToast } = useToast();
@@ -21,8 +22,9 @@ export default function AdminDocumentsPage() {
         Secure document management · Protected access
       </p>
 
-      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-warning">
-        🔒 Documents are stored securely and accessible only to authorized hosts.
+      <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-warning">
+        <Icons.Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+        Documents are stored securely and accessible only to authorized hosts.
       </div>
 
       <div className="mt-8 hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">

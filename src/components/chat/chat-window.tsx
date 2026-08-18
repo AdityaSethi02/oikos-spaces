@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FileAttachment } from "@/components/chat/file-attachment";
 import { UploadDocument } from "@/components/forms/upload-document";
 import { Modal } from "@/components/ui/modal";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/data/mock/conversations";
 
@@ -66,11 +67,11 @@ export function ChatWindow({
               aria-label="Attach file"
               aria-expanded={attachOpen}
             >
-              📎
+              <Icons.Paperclip className="h-5 w-5" />
             </button>
             {attachOpen && (
               <div
-                className="absolute bottom-12 left-0 z-10 w-52 rounded-xl border border-border bg-surface p-2 shadow-soft"
+                className="absolute bottom-12 left-0 z-20 w-52 rounded-xl border border-border bg-surface p-2 shadow-soft"
                 role="menu"
               >
                 <input
@@ -88,7 +89,7 @@ export function ChatWindow({
                 <button
                   type="button"
                   role="menuitem"
-                  className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-background"
+                  className="w-full min-h-11 rounded-lg px-3 py-2 text-left text-sm hover:bg-background"
                   onClick={() => fileRef.current?.click()}
                 >
                   Photo or PDF
@@ -97,7 +98,7 @@ export function ChatWindow({
                   <button
                     type="button"
                     role="menuitem"
-                    className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-background"
+                    className="w-full min-h-11 rounded-lg px-3 py-2 text-left text-sm hover:bg-background"
                     onClick={() => {
                       setAttachOpen(false);
                       setIdOpen(true);
@@ -122,8 +123,9 @@ export function ChatWindow({
             rows={1}
             className="min-h-[44px] flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
           />
-          <Button onClick={handleSend} size="md" className="shrink-0">
-            Send
+          <Button onClick={handleSend} size="md" className="shrink-0 px-3 sm:px-5" aria-label="Send message">
+            <Icons.Send className="h-4 w-4 sm:hidden" />
+            <span className="hidden sm:inline">Send</span>
           </Button>
         </div>
       </div>

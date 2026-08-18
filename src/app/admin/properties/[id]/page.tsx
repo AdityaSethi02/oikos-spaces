@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getPropertyById, type Amenity } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
@@ -136,9 +136,9 @@ export default function AdminPropertyEditPage() {
         <Card>
           <h2 className="font-serif text-lg">Availability</h2>
           <p className="mt-2 text-sm text-muted">Use the host calendar to block dates or review occupancy.</p>
-          <Link href="/admin/calendar" className="mt-4 inline-block">
-            <Button variant="outline" size="sm">Open calendar</Button>
-          </Link>
+          <ButtonLink href="/admin/calendar" variant="outline" size="sm" className="mt-4">
+            Open calendar
+          </ButtonLink>
         </Card>
 
         <Card>

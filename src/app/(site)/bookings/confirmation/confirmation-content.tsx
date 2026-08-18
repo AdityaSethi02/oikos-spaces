@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingStatusBadge } from "@/components/ui/badge";
+import { Icons } from "@/components/icons";
 
 export default function BookingConfirmationContent() {
   const searchParams = useSearchParams();
@@ -13,8 +13,8 @@ export default function BookingConfirmationContent() {
   return (
     <div className="section-padding">
       <div className="container-page max-w-lg text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-3xl text-success">
-          ✓
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-success">
+          <Icons.Check className="h-8 w-8" />
         </div>
         <h1 className="mt-6 font-serif text-3xl">Booking confirmed!</h1>
         <p className="mt-3 text-muted">
@@ -32,13 +32,13 @@ export default function BookingConfirmationContent() {
           </p>
         </Card>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link href={`/bookings/${bookingId}`}>
-            <Button fullWidth>View booking</Button>
-          </Link>
-          <Link href="/messages/conv-2">
-            <Button variant="outline" fullWidth>Message host</Button>
-          </Link>
+        <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+          <ButtonLink href={`/bookings/${bookingId}`} fullWidth className="sm:w-auto">
+            View booking
+          </ButtonLink>
+          <ButtonLink href="/messages/conv-2" variant="outline" fullWidth className="sm:w-auto">
+            Message host
+          </ButtonLink>
         </div>
       </div>
     </div>

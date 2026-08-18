@@ -6,6 +6,7 @@ import { useState } from "react";
 import { brand, navigation } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import { Drawer } from "@/components/ui/drawer";
+import { Icons } from "@/components/icons";
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -24,7 +25,7 @@ export function AdminSidebar() {
             href={item.href}
             onClick={() => setMobileOpen(false)}
             className={cn(
-              "rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              "min-h-11 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
               isActive
                 ? "bg-accent-light text-accent"
                 : "text-stone-300 hover:bg-stone-800 hover:text-white",
@@ -45,11 +46,12 @@ export function AdminSidebar() {
           {brand.name}
         </Link>
         <button
+          type="button"
           onClick={() => setMobileOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-stone-300 hover:bg-stone-800"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-stone-300 hover:bg-stone-800"
           aria-label="Open admin menu"
         >
-          ☰
+          <Icons.Menu className="h-6 w-6" />
         </button>
       </div>
 
@@ -75,9 +77,10 @@ export function AdminSidebar() {
         <div className="border-t border-stone-800 p-4">
           <Link
             href="/"
-            className="text-sm text-stone-400 hover:text-white"
+            className="inline-flex items-center gap-1.5 text-sm text-stone-400 hover:text-white"
           >
-            ← Back to website
+            <Icons.ArrowLeft className="h-4 w-4" />
+            Back to website
           </Link>
         </div>
       </aside>

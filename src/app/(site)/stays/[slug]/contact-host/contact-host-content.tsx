@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { getPropertyBySlug } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
 import { brand } from "@/lib/brand";
+import { Icons } from "@/components/icons";
 
 export default function ContactHostContent() {
   const params = useParams();
@@ -73,8 +74,8 @@ export default function ContactHostContent() {
             <Card>
               <h2 className="font-serif text-lg">Your host</h2>
               <div className="mt-4 flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-2xl">
-                  👤
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-accent">
+                  <Icons.User className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="font-medium">{brand.hostName}</p>

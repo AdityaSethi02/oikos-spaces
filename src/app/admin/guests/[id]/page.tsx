@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { FileAttachment } from "@/components/chat/file-attachment";
 import { getGuestById, documents } from "@/data/mock/admin";
 import { getBookingsWithProperty } from "@/data/mock/bookings";
@@ -82,9 +82,9 @@ export default async function AdminGuestDetailPage({ params }: Props) {
         </Card>
       </div>
 
-      <Link href="/admin/messages" className="mt-6 inline-block">
-        <Button>Open messages</Button>
-      </Link>
+      <ButtonLink href="/admin/messages" className="mt-6">
+        Open messages
+      </ButtonLink>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { PropertyCard } from "@/components/property/property-card";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { properties } from "@/data/mock/properties";
+import { Icons } from "@/components/icons";
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites();
@@ -22,7 +22,7 @@ export default function FavoritesPage() {
             description="Tap the heart on any property to save it for later."
             actionLabel="Explore stays"
             actionHref="/stays"
-            icon="♡"
+            icon={<Icons.Heart className="h-6 w-6" />}
           />
         </div>
       </div>
@@ -38,9 +38,9 @@ export default function FavoritesPage() {
           {saved.map((property) => (
             <div key={property.id} className="space-y-3">
               <PropertyCard property={property} />
-              <Link href={`/stays/${property.slug}/availability`} className="block">
-                <Button variant="outline" size="sm" fullWidth>Check availability</Button>
-              </Link>
+              <ButtonLink href={`/stays/${property.slug}/availability`} variant="outline" size="sm" fullWidth>
+                Check availability
+              </ButtonLink>
             </div>
           ))}
         </div>

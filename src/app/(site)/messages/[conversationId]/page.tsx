@@ -43,7 +43,7 @@ export default function ConversationPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col lg:h-[calc(100vh-5rem)]">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col lg:h-[calc(100dvh-4.5rem)]">
       <div className="border-b border-border px-4 py-3 lg:px-6">
         <div className="flex items-center gap-3">
           <Link href="/messages" className="text-sm text-muted hover:text-foreground">

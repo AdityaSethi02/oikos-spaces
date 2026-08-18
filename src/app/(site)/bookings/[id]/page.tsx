@@ -7,7 +7,7 @@ import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { UploadDocument } from "@/components/forms/upload-document";
 import { BookingStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/feedback/confirm-dialog";
 import { ErrorState } from "@/components/feedback/empty-state";
@@ -119,9 +119,9 @@ export default function BookingDetailPage() {
                 <p className="mt-3 text-sm text-muted">
                   You are currently checked in. Contact your host anytime if you need help.
                 </p>
-                <Link href="/messages/conv-2" className="mt-4 block">
-                  <Button fullWidth>Contact host</Button>
-                </Link>
+                <ButtonLink href="/messages/conv-2" fullWidth className="mt-4">
+                  Contact host
+                </ButtonLink>
               </Card>
             )}
 
@@ -131,9 +131,9 @@ export default function BookingDetailPage() {
                 <p className="mt-3 text-sm text-muted">
                   Check-out is confirmed. Thank you for staying with us.
                 </p>
-                <Link href={`/stays/${property.slug}#reviews`} className="mt-4 block">
-                  <Button fullWidth>Write a review</Button>
-                </Link>
+                <ButtonLink href={`/stays/${property.slug}#reviews`} fullWidth className="mt-4">
+                  Write a review
+                </ButtonLink>
               </Card>
             )}
 
@@ -164,9 +164,9 @@ export default function BookingDetailPage() {
             </Card>
 
             <div className="flex flex-col gap-3">
-              <Link href="/messages/conv-2">
-                <Button fullWidth>Message host</Button>
-              </Link>
+              <ButtonLink href="/messages/conv-2" fullWidth>
+                Message host
+              </ButtonLink>
               <Button variant="outline" fullWidth onClick={() => showToast("Invoice downloaded (demo)", "success")}>
                 Download invoice
               </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
 
 export interface FileAttachmentProps {
   fileName: string;
@@ -36,8 +37,8 @@ export function FileAttachment({
         onClick={onView}
         className="flex min-w-0 flex-1 items-center gap-3 text-left"
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-light text-sm" aria-hidden="true">
-          {type === "PDF" ? "PDF" : "IMG"}
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-light text-accent" aria-hidden="true">
+          {type === "PDF" ? <Icons.FileText className="h-5 w-5" /> : <Icons.Image className="h-5 w-5" />}
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium">{fileName}</p>

@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { DatePicker } from "@/components/calendar/date-picker";
@@ -26,6 +25,8 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
 
   const nights = checkIn && checkOut ? calculateNights(checkIn, checkOut) : 0;
   const noDates = Boolean(checkIn && !checkOut);
+  const bookHref = `/login?next=${encodeURIComponent(`/stays/${property.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}`;
+  const contactHref = `/stays/${property.slug}/contact-host?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
 
   return (
     <Card
@@ -93,21 +94,13 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
         </div>
       )}
 
-      <Link
-        href={`/login?next=${encodeURIComponent(`/stays/${property.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}`}
-        className="mt-5 block"
-      >
-        <Button fullWidth disabled={!checkIn || !checkOut}>Check availability</Button>
-      </Link>
+      <ButtonLink href={bookHref} fullWidth className="mt-5" disabled={!checkIn || !checkOut}>
+        Check availability
+      </ButtonLink>
 
-      <Link
-        href={`/stays/${property.slug}/contact-host?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`}
-        className="mt-3 block"
-      >
-        <Button variant="outline" fullWidth>
-          Contact host
-        </Button>
-      </Link>
+      <ButtonLink href={contactHref} variant="outline" fullWidth className="mt-3">
+        Contact host
+      </ButtonLink>
 
       <p className="mt-4 text-center text-xs text-muted">
         You won&apos;t be charged yet
@@ -118,18 +111,18 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
 
 export function MobileBookingBar({ property, slug }: { property: Property; slug: string }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-surface/95 p-4 backdrop-blur-sm lg:hidden">
-      <div className="flex items-center justify-between gap-4">
-        <div>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 px-4 py-3 backdrop-blur-sm pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
           <p className="font-semibold text-foreground">
             {formatCurrency(property.pricePerNight)}
             <span className="text-sm font-normal text-muted"> / night</span>
           </p>
           <p className="text-xs text-muted">You won&apos;t be charged yet</p>
         </div>
-        <Link href={`/stays/${slug}/availability`}>
-          <Button>Check availability</Button>
-        </Link>
+        <ButtonLink href={`/stays/${slug}/availability`} className="shrink-0">
+          Check availability
+        </ButtonLink>
       </div>
     </div>
   );
