@@ -60,13 +60,15 @@ export default function BookingsPage() {
           />
         ) : (
           <div className="mt-8 space-y-4">
-            {active.data.map((booking) => (
+            {active.data.map((booking) => {
+              const bSeed = booking.property.id.split("").reduce((a: number, c: string) => a + c.charCodeAt(0), 0);
+              return (
               <div
                 key={booking.id}
                 className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:p-5"
               >
                 <div className="w-full shrink-0 overflow-hidden rounded-lg sm:w-32">
-                  <ImagePlaceholder variant="property" className="rounded-lg min-h-[100px]" />
+                  <ImagePlaceholder variant="property" seed={bSeed} className="rounded-lg aspect-[4/3] sm:aspect-square" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -95,7 +97,7 @@ export default function BookingsPage() {
                   )}
                 </div>
               </div>
-            ))}
+            );})}
           </div>
         )}
       </div>

@@ -124,12 +124,12 @@ export default function AdminPropertyEditPage() {
             }}
           >
             {Array.from({ length: 4 }).map((_, i) => (
-              <ImagePlaceholder key={i} variant="gallery-sm" />
+              <ImagePlaceholder key={i} variant="gallery-sm" seed={i} />
             ))}
             <div className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-sm text-muted">
               + Add photo
             </div>
-            <ImagePlaceholder variant="video" className="aspect-square" label="Video" />
+            <ImagePlaceholder variant="video" seed={0} className="aspect-square" label="Video" />
           </div>
         </Card>
 

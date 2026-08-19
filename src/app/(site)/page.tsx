@@ -41,10 +41,10 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative">
         <div className="relative overflow-hidden">
-          <ImagePlaceholder variant="hero" className="rounded-none min-h-[420px] sm:min-h-[520px]" label="Hero" />
+          <ImagePlaceholder variant="hero" seed={0} className="rounded-none min-h-[420px] sm:min-h-[520px]" label="Hero" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
           <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
-            <div className="container-page pb-12 pt-24 sm:pb-16">
+            <div className="container-page pb-16 pt-24 sm:pb-20">
               <h1 className="max-w-2xl font-serif text-3xl text-white sm:text-4xl lg:text-5xl text-balance">
                 Boutique stays that feel like home.
               </h1>
@@ -54,7 +54,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="container-page relative z-10 -mt-16 sm:-mt-20">
+        <div className="container-page relative z-10 mt-2 sm:-mt-8">
           <SearchWidget variant="hero" />
         </div>
       </section>
@@ -86,11 +86,11 @@ export default function HomePage() {
             {highlights.map((h) => {
               const Icon = h.icon;
               return (
-              <div key={h.label} className="text-center sm:text-left">
-                <Icon className="mx-auto h-6 w-6 text-accent sm:mx-0" aria-hidden />
-                <p className="mt-2 font-medium text-foreground">{h.label}</p>
-                <p className="mt-1 text-sm text-muted">{h.desc}</p>
-              </div>
+                <div key={h.label} className="text-center sm:text-left">
+                  <Icon className="mx-auto h-6 w-6 text-accent sm:mx-0" aria-hidden />
+                  <p className="mt-2 font-medium text-foreground">{h.label}</p>
+                  <p className="mt-1 text-sm text-muted">{h.desc}</p>
+                </div>
               );
             })}
           </div>
@@ -115,7 +115,7 @@ export default function HomePage() {
       {/* Udaipur */}
       <section className="section-padding bg-accent-light/30">
         <div className="container-page grid items-center gap-10 lg:grid-cols-2">
-          <ImagePlaceholder variant="lifestyle" label="Udaipur" />
+          <ImagePlaceholder variant="lifestyle" seed={0} label="Udaipur" />
           <div>
             <h2 className="font-serif text-3xl sm:text-4xl">
               Discover {brand.location.split(",")[0]}
@@ -165,8 +165,8 @@ export default function HomePage() {
             Browse our homes, check availability, and book directly — online or with a personal touch.
           </p>
           <ButtonLink href="/stays" variant="secondary" size="lg" className="mt-8">
-              Explore stays
-            </ButtonLink>
+            Explore stays
+          </ButtonLink>
         </div>
       </section>
     </>

@@ -25,6 +25,8 @@ export function PropertyCard({
   className,
 }: PropertyCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  // Derive a stable numeric seed from the property id string
+  const seed = property.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
 
   if (layout === "horizontal") {
     return (
@@ -36,7 +38,8 @@ export function PropertyCard({
           >
             <ImagePlaceholder
               variant="property"
-              className="h-full min-h-[200px] rounded-none rounded-t-xl sm:min-h-[220px] sm:rounded-l-xl sm:rounded-tr-none"
+              seed={seed}
+              className="aspect-[4/3] rounded-none rounded-t-xl sm:aspect-auto sm:h-full sm:rounded-l-xl sm:rounded-tr-none"
             />
           </Link>
           <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
@@ -96,6 +99,7 @@ export function PropertyCard({
         <Link href={`/stays/${property.slug}`} className="block">
           <ImagePlaceholder
             variant="property"
+            seed={seed}
             className="rounded-none rounded-t-xl transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </Link>

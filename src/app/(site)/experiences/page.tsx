@@ -23,13 +23,14 @@ export default function ExperiencesPage() {
         </p>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {experiences.map((exp) => (
+          {experiences.map((exp, ei) => (
             <article
               key={exp.id}
               className="group overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-soft"
             >
               <ImagePlaceholder
                 variant="lifestyle"
+                seed={ei}
                 className="rounded-none rounded-t-xl transition-transform group-hover:scale-[1.02]"
               />
               <div className="p-5">

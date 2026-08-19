@@ -104,9 +104,9 @@ export default async function PropertyDetailPage({ params }: Props) {
           <section>
             <h2 className="font-serif text-xl">Sleeping arrangements</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {property.bedroomDetails.map((bed) => (
+              {property.bedroomDetails.map((bed, bi) => (
                 <div key={bed.name} className="rounded-xl border border-border overflow-hidden">
-                  <ImagePlaceholder variant="bedroom" className="rounded-none rounded-t-xl" />
+                  <ImagePlaceholder variant="bedroom" seed={bi} className="rounded-none rounded-t-xl" />
                   <div className="p-4">
                     <p className="font-medium">{bed.name}</p>
                     <p className="text-sm text-muted">{bed.beds}</p>
@@ -115,8 +115,8 @@ export default async function PropertyDetailPage({ params }: Props) {
               ))}
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <ImagePlaceholder variant="bathroom" label="Bathroom" />
-              <ImagePlaceholder variant="video" label="Video Tour" />
+              <ImagePlaceholder variant="bathroom" seed={0} label="Bathroom" />
+              <ImagePlaceholder variant="video" seed={0} label="Video Tour" />
             </div>
           </section>
 
@@ -136,7 +136,7 @@ export default async function PropertyDetailPage({ params }: Props) {
           <section>
             <h2 className="font-serif text-xl">Location</h2>
             <p className="mt-2 text-sm text-muted">{property.address}</p>
-            <ImagePlaceholder variant="map" className="mt-4" />
+            <ImagePlaceholder variant="map" seed={0} className="mt-4" />
           </section>
 
           {/* House rules */}

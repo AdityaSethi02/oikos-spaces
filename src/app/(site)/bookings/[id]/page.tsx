@@ -75,7 +75,7 @@ export default function BookingDetailPage() {
             <Card>
               <div className="flex gap-4">
                 <div className="w-24 shrink-0 overflow-hidden rounded-lg">
-                  <ImagePlaceholder variant="property" className="rounded-lg" />
+                  <ImagePlaceholder variant="property" seed={property.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)} className="rounded-lg aspect-square" />
                 </div>
                 <div>
                   <Link href={`/stays/${property.slug}`} className="font-serif text-xl hover:text-accent">

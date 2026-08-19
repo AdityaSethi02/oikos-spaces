@@ -52,7 +52,7 @@ export default function ContactPage() {
               </dl>
             </Card>
 
-            <ImagePlaceholder variant="map" label="Location map" />
+            <ImagePlaceholder variant="map" seed={0} label="Location map" />
           </div>
 
           <Card>

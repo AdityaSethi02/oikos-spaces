@@ -24,7 +24,7 @@ export function PropertyGallery({
       <div className="relative hidden md:block">
         <div className="grid h-[420px] grid-cols-4 grid-rows-2 gap-2 lg:h-[480px]">
           <div className="col-span-2 row-span-2 overflow-hidden rounded-l-xl">
-            <ImagePlaceholder variant="gallery" className="h-full rounded-none rounded-l-xl" label={`${propertyName} — Main`} />
+            <ImagePlaceholder variant="gallery" className="h-full rounded-none rounded-l-xl" label={`${propertyName} — Main`} seed={0} />
           </div>
           {[0, 1, 2, 3].map((i) => (
             <div
@@ -37,6 +37,7 @@ export function PropertyGallery({
             >
               <ImagePlaceholder
                 variant="gallery-sm"
+                seed={i + 1}
                 className={cn(
                   "h-full rounded-none",
                   i === 1 && "rounded-tr-xl",
@@ -68,7 +69,7 @@ export function PropertyGallery({
             if (dx > 40) setMobileIndex((i) => Math.max(0, i - 1));
           }}
         >
-          <ImagePlaceholder variant="property" label={`Photo ${mobileIndex + 1} of ${galleryCount}`} />
+          <ImagePlaceholder variant="property" seed={mobileIndex} label={`Photo ${mobileIndex + 1} of ${galleryCount}`} />
           <div className="absolute bottom-3 right-3 rounded-md bg-black/60 px-2.5 py-1 text-xs text-white">
             {mobileIndex + 1} / {galleryCount}
           </div>
@@ -106,7 +107,7 @@ export function PropertyGallery({
       <Modal open={showAll} onClose={() => setShowAll(false)} title="All photos" size="lg">
         <div className="grid gap-3 sm:grid-cols-2">
           {Array.from({ length: Math.min(galleryCount, 8) }).map((_, i) => (
-            <ImagePlaceholder key={i} variant="gallery" label={`Photo ${i + 1}`} />
+            <ImagePlaceholder key={i} variant="gallery" seed={i} label={`Photo ${i + 1}`} />
           ))}
         </div>
       </Modal>
