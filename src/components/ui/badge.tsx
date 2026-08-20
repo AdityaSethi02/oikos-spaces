@@ -43,6 +43,7 @@ export function BookingStatusBadge({
   status: string;
 }) {
   const config: Record<string, { label: string; variant: BadgeVariant }> = {
+    inquiry: { label: "Inquiry", variant: "info" },
     reserved: { label: "Reserved", variant: "info" },
     payment_pending: { label: "Payment Pending", variant: "warning" },
     confirmed: { label: "Confirmed", variant: "success" },

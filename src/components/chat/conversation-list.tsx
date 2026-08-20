@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { Conversation } from "@/data/mock/conversations";
+import type { Conversation } from "@/server/dto/domain.dto";
 
 interface ConversationListProps {
   conversations: Conversation[];

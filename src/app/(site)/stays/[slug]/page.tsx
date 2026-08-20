@@ -3,35 +3,40 @@ import { notFound } from "next/navigation";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyAmenities } from "@/components/property/property-amenities";
 import { BookingCard, MobileBookingBar } from "@/components/booking/booking-card";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { EditorialImage } from "@/components/media/editorial-image";
+import { PropertyMap } from "@/components/property/property-map";
 import { PropertyActions } from "@/components/property/property-actions";
 import { StarRating, PropertyMeta } from "@/components/property/property-meta";
-import { getPropertyBySlug } from "@/data/mock/properties";
-import { getReviewsByPropertyId } from "@/data/mock/reviews";
+import { PropertyDetailSkeleton } from "@/components/feedback/data-skeletons";
+import { getPropertyDetail } from "@/server/services/property.service";
+import { isDatabaseConfigured } from "@/lib/env";
 import { Icons } from "@/components/icons";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const { properties } = await import("@/data/mock/properties");
-  return properties.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props) {
+  if (!isDatabaseConfigured) {
+    return { title: "Stay" };
+  }
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
-  if (!property) return { title: "Property not found" };
-  return { title: property.name, description: property.description };
+  const detail = await getPropertyDetail(slug);
+  if (!detail) return { title: "Property not found" };
+  return { title: detail.property.name, description: detail.property.description };
 }
 
 export default async function PropertyDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const property = getPropertyBySlug(slug);
-  if (!property) notFound();
+  if (!isDatabaseConfigured) {
+    return <PropertyDetailSkeleton />;
+  }
 
-  const reviews = getReviewsByPropertyId(property.id);
+  const { slug } = await params;
+  const detail = await getPropertyDetail(slug);
+  if (!detail) notFound();
+  const { property, reviews } = detail;
 
   return (
     <div className="pb-24 lg:pb-12">
@@ -60,7 +65,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
       <div className="container-page">
         <PropertyGallery
-          galleryCount={property.galleryCount}
+          media={property.media}
           propertyName={property.name}
         />
       </div>
@@ -105,8 +110,19 @@ export default async function PropertyDetailPage({ params }: Props) {
             <h2 className="font-serif text-xl">Sleeping arrangements</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {property.bedroomDetails.map((bed, bi) => (
-                <div key={bed.name} className="rounded-xl border border-border overflow-hidden">
-                  <ImagePlaceholder variant="bedroom" seed={bi} className="rounded-none rounded-t-xl" />
+                <div key={bed.name} className="overflow-hidden rounded-xl border border-border">
+                  {property.media?.[bi]?.kind === "PHOTO" ? (
+                    <div className="relative aspect-[4/3] bg-stone-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={property.media[bi].url}
+                        alt={bed.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <EditorialImage variant={bi % 2 === 0 ? "warm" : "cool"} className="aspect-[4/3] rounded-none" />
+                  )}
                   <div className="p-4">
                     <p className="font-medium">{bed.name}</p>
                     <p className="text-sm text-muted">{bed.beds}</p>
@@ -114,10 +130,9 @@ export default async function PropertyDetailPage({ params }: Props) {
                 </div>
               ))}
             </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <ImagePlaceholder variant="bathroom" seed={0} label="Bathroom" />
-              <ImagePlaceholder variant="video" seed={0} label="Video Tour" />
-            </div>
+            {property.media?.some((m) => m.kind === "VIDEO") && (
+              <p className="mt-4 text-sm text-muted">Video tour available in the gallery above.</p>
+            )}
           </section>
 
           {/* Included */}
@@ -136,7 +151,13 @@ export default async function PropertyDetailPage({ params }: Props) {
           <section>
             <h2 className="font-serif text-xl">Location</h2>
             <p className="mt-2 text-sm text-muted">{property.address}</p>
-            <ImagePlaceholder variant="map" seed={0} className="mt-4" />
+            <PropertyMap
+              latitude={property.latitude}
+              longitude={property.longitude}
+              address={property.address}
+              propertyName={property.name}
+              className="mt-4"
+            />
           </section>
 
           {/* House rules */}

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { brand } from "@/lib/brand";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -14,14 +13,12 @@ interface SearchWidgetProps {
 
 export function SearchWidget({ variant = "hero", className }: SearchWidgetProps) {
   const router = useRouter();
-  const [location, setLocation] = useState(brand.location.split(",")[0]);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (location) params.set("location", location);
     if (checkIn) params.set("checkIn", checkIn);
     if (checkOut) params.set("checkOut", checkOut);
     params.set("guests", String(guests));
@@ -40,19 +37,10 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
         className={cn(
           "grid gap-3",
           variant === "hero"
-            ? "sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_0.8fr_auto]"
-            : "sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_0.7fr_auto]",
+            ? "sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.8fr_auto]"
+            : "sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.7fr_auto]",
         )}
       >
-        <SearchField label="Where to?">
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Udaipur"
-            className="search-input min-w-0"
-          />
-        </SearchField>
         <SearchField label="Check-in">
           <input
             type="date"

@@ -1,13 +1,14 @@
 import { SearchWidget } from "@/components/booking/search-widget";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
-import { PropertyCard } from "@/components/property/property-card";
+import { EditorialImage } from "@/components/media/editorial-image";
+import { PropertyCarousel } from "@/components/property/property-carousel";
 import { ButtonLink } from "@/components/ui/button";
-import { properties } from "@/data/mock/properties";
-import { getReviewsByPropertyId } from "@/data/mock/reviews";
 import { brand } from "@/lib/brand";
 import { StarRating } from "@/components/property/property-meta";
 import { Icons } from "@/components/icons";
+import { PropertyCarouselSkeleton, ReviewsSectionSkeleton } from "@/components/feedback/data-skeletons";
 import type { IconType } from "react-icons";
+import { getPropertyDetail, listPublicProperties } from "@/server/services/property.service";
+import { isDatabaseConfigured } from "@/lib/env";
 
 const highlights: { icon: IconType; label: string; desc: string }[] = [
   { icon: Icons.House, label: "Entire Home", desc: "Private spaces, exclusively yours" },
@@ -31,17 +32,29 @@ const whyStay = [
   },
 ];
 
-export default function HomePage() {
-  const featuredReviews = properties.flatMap((p) =>
-    getReviewsByPropertyId(p.id).slice(0, 1).map((r) => ({ ...r, propertyName: p.name })),
-  );
+export default async function HomePage() {
+  const dbReady = isDatabaseConfigured;
+  const properties = dbReady ? await listPublicProperties() : [];
+  const featuredReviews = dbReady
+    ? (
+        await Promise.all(
+          properties.map(async (property) => {
+            const detail = await getPropertyDetail(property.slug);
+            return (detail?.reviews ?? []).slice(0, 1).map((review) => ({
+              ...review,
+              propertyName: property.name,
+            }));
+          }),
+        )
+      ).flat()
+    : [];
 
   return (
     <>
       {/* Hero */}
       <section className="relative">
         <div className="relative overflow-hidden">
-          <ImagePlaceholder variant="hero" seed={0} className="rounded-none min-h-[420px] sm:min-h-[520px]" label="Hero" />
+          <EditorialImage variant="hero" className="min-h-[420px] rounded-none sm:min-h-[520px]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
           <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
             <div className="container-page pb-16 pt-24 sm:pb-20">
@@ -71,11 +84,11 @@ export default function HomePage() {
             </div>
             <ButtonLink href="/stays" variant="outline">View all stays</ButtonLink>
           </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
+          {dbReady ? (
+            <PropertyCarousel properties={properties} showPrice={false} />
+          ) : (
+            <PropertyCarouselSkeleton />
+          )}
         </div>
       </section>
 
@@ -115,7 +128,7 @@ export default function HomePage() {
       {/* Udaipur */}
       <section className="section-padding bg-accent-light/30">
         <div className="container-page grid items-center gap-10 lg:grid-cols-2">
-          <ImagePlaceholder variant="lifestyle" seed={0} label="Udaipur" />
+          <EditorialImage variant="cool" label="Udaipur" className="min-h-[280px]" />
           <div>
             <h2 className="font-serif text-3xl sm:text-4xl">
               Discover {brand.location.split(",")[0]}
@@ -136,22 +149,26 @@ export default function HomePage() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-serif text-3xl sm:text-4xl text-center">Guest reviews</h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredReviews.map((review) => (
-              <div
-                key={review.id}
-                className="rounded-xl border border-border bg-surface p-6"
-              >
-                <StarRating rating={review.rating} />
-                <p className="mt-4 text-sm leading-relaxed text-foreground">
-                  &ldquo;{review.comment}&rdquo;
-                </p>
-                <p className="mt-4 text-sm text-muted">
-                  — {review.guestName}, {review.propertyName}
-                </p>
-              </div>
-            ))}
-          </div>
+          {dbReady ? (
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredReviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-xl border border-border bg-surface p-6"
+                >
+                  <StarRating rating={review.rating} />
+                  <p className="mt-4 text-sm leading-relaxed text-foreground">
+                    &ldquo;{review.comment}&rdquo;
+                  </p>
+                  <p className="mt-4 text-sm text-muted">
+                    — {review.guestName}, {review.propertyName}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ReviewsSectionSkeleton />
+          )}
         </div>
       </section>
 

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useFavorites } from "@/components/providers/favorites-provider";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyThumbnail } from "@/components/media/property-thumbnail";
 import { StarRating, PropertyMeta } from "@/components/property/property-meta";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Icons } from "@/components/icons";
-import type { Property } from "@/data/mock/properties";
+import type { Property } from "@/server/dto/domain.dto";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface PropertyCardProps {
   property: Property;
   layout?: "vertical" | "horizontal";
   showFavorite?: boolean;
+  showPrice?: boolean;
   className?: string;
 }
 
@@ -22,11 +23,10 @@ export function PropertyCard({
   property,
   layout = "vertical",
   showFavorite = true,
+  showPrice = true,
   className,
 }: PropertyCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
-  // Derive a stable numeric seed from the property id string
-  const seed = property.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
 
   if (layout === "horizontal") {
     return (
@@ -36,10 +36,9 @@ export function PropertyCard({
             href={`/stays/${property.slug}`}
             className="relative block w-full shrink-0 sm:w-72 lg:w-80"
           >
-            <ImagePlaceholder
-              variant="property"
-              seed={seed}
-              className="aspect-[4/3] rounded-none rounded-t-xl sm:aspect-auto sm:h-full sm:rounded-l-xl sm:rounded-tr-none"
+            <PropertyThumbnail
+              property={property}
+              className="aspect-[4/3] sm:aspect-auto sm:min-h-full sm:rounded-l-xl rounded-t-xl sm:rounded-tr-none"
             />
           </Link>
           <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
@@ -76,13 +75,15 @@ export function PropertyCard({
                 />
               </div>
             </div>
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-foreground">
-                <span className="font-semibold">
-                  {formatCurrency(property.pricePerNight)}
-                </span>
-                <span className="text-sm text-muted"> / night</span>
-              </p>
+            <div className={cn("mt-5 flex flex-wrap items-center gap-3", showPrice ? "justify-between" : "justify-end")}>
+              {showPrice && (
+                <p className="text-foreground">
+                  <span className="font-semibold">
+                    {formatCurrency(property.pricePerNight)}
+                  </span>
+                  <span className="text-sm text-muted"> / night</span>
+                </p>
+              )}
               <ButtonLink href={`/stays/${property.slug}`} variant="outline" size="sm">
                 View details
               </ButtonLink>
@@ -97,10 +98,9 @@ export function PropertyCard({
     <Card padding="none" hover className={cn("group overflow-hidden", className)}>
       <div className="relative">
         <Link href={`/stays/${property.slug}`} className="block">
-          <ImagePlaceholder
-            variant="property"
-            seed={seed}
-            className="rounded-none rounded-t-xl transition-transform duration-300 group-hover:scale-[1.02]"
+          <PropertyThumbnail
+            property={property}
+            className="aspect-[4/3] rounded-t-xl transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </Link>
         {showFavorite && (
@@ -129,13 +129,15 @@ export function PropertyCard({
         <div className="mt-3">
           <StarRating rating={property.rating} reviewCount={property.reviewCount} />
         </div>
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <p className="text-foreground">
-            <span className="font-semibold">
-              {formatCurrency(property.pricePerNight)}
-            </span>
-            <span className="text-sm text-muted"> / night</span>
-          </p>
+        <div className={cn("mt-4 flex items-center gap-3", showPrice ? "justify-between" : "justify-end")}>
+          {showPrice && (
+            <p className="text-foreground">
+              <span className="font-semibold">
+                {formatCurrency(property.pricePerNight)}
+              </span>
+              <span className="text-sm text-muted"> / night</span>
+            </p>
+          )}
           <ButtonLink href={`/stays/${property.slug}`} variant="outline" size="sm">
             View
           </ButtonLink>

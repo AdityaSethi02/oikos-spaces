@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyThumbnail } from "@/components/media/property-thumbnail";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { Card } from "@/components/ui/card";
-import type { Property } from "@/data/mock/properties";
+import type { Property } from "@/server/dto/domain.dto";
+import type { QuoteDto } from "@/server/dto/public.dto";
 import { calculateNights, formatCurrency, formatDateRange } from "@/lib/utils";
 import { useState } from "react";
 
@@ -13,6 +14,7 @@ interface BookingSummaryProps {
   checkIn: string;
   checkOut: string;
   guests: number;
+  quote?: QuoteDto | null;
   showProperty?: boolean;
   collapsible?: boolean;
 }
@@ -22,6 +24,7 @@ export function BookingSummary({
   checkIn,
   checkOut,
   guests,
+  quote,
   showProperty = true,
   collapsible = false,
 }: BookingSummaryProps) {
@@ -39,7 +42,7 @@ export function BookingSummary({
         >
           <span className="font-medium">Your stay</span>
           <span className="text-sm text-muted">
-            {formatCurrency(property.pricePerNight * nights)} · {open ? "Hide" : "Show"}
+            {formatCurrency(quote?.totalRupees ?? property.pricePerNight * nights)} · {open ? "Hide" : "Show"}
           </span>
         </button>
       )}
@@ -47,8 +50,8 @@ export function BookingSummary({
       <div className={collapsible ? (open ? "mt-4 block" : "hidden lg:block") : ""}>
         {showProperty && (
           <div className="flex gap-4">
-            <div className="w-24 shrink-0 overflow-hidden rounded-lg">
-              <ImagePlaceholder variant="property" seed={property.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)} className="rounded-lg aspect-square" />
+            <div className="relative w-24 shrink-0 aspect-square overflow-hidden rounded-lg">
+              <PropertyThumbnail property={property} className="absolute inset-0 rounded-lg" sizes="96px" />
             </div>
             <div>
               <Link
@@ -79,9 +82,13 @@ export function BookingSummary({
 
         <div className="mt-5">
           <PriceBreakdown
-            pricePerNight={property.pricePerNight}
+            snapshot={quote?.snapshot}
+            pricePerNight={quote?.averageNightlyRupees ?? property.pricePerNight}
             nights={nights}
-            cleaningFee={property.cleaningFee}
+            cleaningFee={quote?.cleaningFeeRupees ?? property.cleaningFee}
+            serviceFee={quote?.serviceFeeRupees ?? 0}
+            taxes={quote?.taxRupees ?? 0}
+            total={quote?.totalRupees}
           />
         </div>
       </div>

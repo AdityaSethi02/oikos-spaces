@@ -1,7 +1,4 @@
-export async function generateStaticParams() {
-  const { properties } = await import("@/data/mock/properties");
-  return properties.map((property) => ({ slug: property.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default function StaySlugLayout({
   children,

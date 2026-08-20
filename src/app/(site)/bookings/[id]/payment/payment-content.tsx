@@ -1,16 +1,21 @@
 "use client";
 
-import { useParams, useSearchParams, useRouter } from "next/navigation";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BookingSummary } from "@/components/booking/booking-summary";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getPropertyBySlug } from "@/data/mock/properties";
+import type { GuestBookingDto } from "@/server/dto/public.dto";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState } from "@/components/feedback/empty-state";
-import { formatCurrency, calculateBookingTotal, calculateNights } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import type { IconType } from "react-icons";
+import {
+  createRazorpayOrderAction,
+  verifyRazorpayCheckoutAction,
+} from "@/app/actions/payment.actions";
 
 const paymentMethods: { id: string; label: string; icon: IconType }[] = [
   { id: "upi", label: "UPI", icon: Icons.Smartphone },
@@ -19,73 +24,105 @@ const paymentMethods: { id: string; label: string; icon: IconType }[] = [
   { id: "netbanking", label: "Net Banking", icon: Icons.Landmark },
 ];
 
-export default function PaymentContent() {
-  const params = useParams();
-  const searchParams = useSearchParams();
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+export default function PaymentContent({ booking }: { booking: GuestBookingDto }) {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const slug = searchParams.get("property") || "the-boho-nook";
-  const property = getPropertyBySlug(slug);
-  const checkIn = searchParams.get("checkIn") || "2026-09-15";
-  const checkOut = searchParams.get("checkOut") || "2026-09-18";
-  const guests = Number(searchParams.get("guests") || 2);
+  const property = booking.property;
+  const total = booking.quote.totalRupees;
 
   const [method, setMethod] = useState("upi");
   const [processing, setProcessing] = useState(false);
-  const [failed, setFailed] = useState(searchParams.get("failed") === "1");
+  const [failed, setFailed] = useState(false);
 
-  if (!property) {
-    return (
-      <div className="container-page section-padding text-center">
-        <p>Property not found</p>
-      </div>
-    );
-  }
-
-  const nights = calculateNights(checkIn, checkOut);
-  const { total } = calculateBookingTotal(
-    property.pricePerNight,
-    nights,
-    property.cleaningFee,
-  );
-
-  const handlePay = () => {
+  const handlePay = async () => {
     setProcessing(true);
-    setTimeout(() => {
+    setFailed(false);
+    const order = await createRazorpayOrderAction(booking.id);
+    if (!order.ok) {
       setProcessing(false);
-      if (method === "netbanking") {
-        setFailed(true);
-        showToast("Payment failed (demo)", "error");
-        return;
-      }
-      showToast("Payment successful (demo)!", "success");
-      router.push(`/bookings/confirmation?id=${params.id}`);
-    }, 1200);
+      setFailed(true);
+      showToast(order.error, "error");
+      return;
+    }
+    if (!window.Razorpay) {
+      setProcessing(false);
+      showToast("Payment widget failed to load. Refresh and try again.", "error");
+      return;
+    }
+
+    const checkout = new window.Razorpay({
+      key: order.keyId,
+      amount: order.amountPaise,
+      currency: order.currency,
+      name: "OIKOS SPACES",
+      description: `Booking ${booking.id}`,
+      order_id: order.orderId,
+      prefill: {
+        name: booking.guestName,
+        email: booking.guestEmail,
+        contact: booking.guestPhone,
+      },
+      theme: { color: "#A67C52" },
+      handler: async (response: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+      }) => {
+        const verified = await verifyRazorpayCheckoutAction({
+          bookingReference: booking.id,
+          orderId: response.razorpay_order_id,
+          paymentId: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        });
+        setProcessing(false);
+        if (!verified.ok) {
+          setFailed(true);
+          showToast(verified.error, "error");
+          return;
+        }
+        showToast("Payment received — confirming your booking…", "success");
+        router.push(`/bookings/confirmation?id=${booking.id}`);
+      },
+      modal: {
+        ondismiss: () => setProcessing(false),
+      },
+    });
+    checkout.open();
   };
 
   return (
     <div className="section-padding">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <div className="container-page">
         <h1 className="font-serif text-3xl">Payment</h1>
         {failed && (
           <div className="mt-6">
             <ErrorState
               title="Payment failed"
-              description="The demo payment did not go through. Try another method — Razorpay will replace this later."
+              description="The payment did not go through. You can try again — confirmation happens only after Razorpay verifies the payment."
               onRetry={() => setFailed(false)}
             />
           </div>
         )}
         <p className="mt-2 flex items-center gap-2 text-sm text-muted">
           <Icons.Lock className="h-4 w-4" aria-hidden />
-          Secure payment · Razorpay integration coming soon
+          Secure payment via Razorpay · UPI, cards, and net banking
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-6">
             <Card>
               <h2 className="font-serif text-xl">Payment method</h2>
+              <p className="mt-2 text-sm text-muted">
+                Choose a preferred method. Razorpay Checkout collects the details securely.
+              </p>
               <div className="mt-6 space-y-3">
                 {paymentMethods.map((pm) => {
                   const Icon = pm.icon;
@@ -110,51 +147,6 @@ export default function PaymentContent() {
               </div>
             </Card>
 
-            {method === "upi" && (
-              <Card>
-                <label htmlFor="upi-id" className="text-sm text-muted">Enter UPI ID (demo)</label>
-                <input
-                  id="upi-id"
-                  className="search-input mt-3"
-                  placeholder="yourname@upi"
-                  defaultValue="guest@upi"
-                />
-              </Card>
-            )}
-
-            {method === "card" && (
-              <Card>
-                <div className="space-y-4">
-                  <input className="search-input" placeholder="Card number" defaultValue="4111 1111 1111 1111" aria-label="Card number" />
-                  <div className="grid grid-cols-2 gap-4">
-                    <input className="search-input" placeholder="MM/YY" defaultValue="12/28" aria-label="Expiry date" />
-                    <input className="search-input" placeholder="CVV" defaultValue="123" aria-label="CVV" />
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {method === "qr" && (
-              <Card className="flex flex-col items-center py-8">
-                <div className="flex h-48 w-48 items-center justify-center rounded-xl border-2 border-dashed border-border bg-background text-sm text-muted">
-                  QR Code Placeholder
-                </div>
-                <p className="mt-4 text-sm text-muted">Scan with any UPI app</p>
-              </Card>
-            )}
-
-            {method === "netbanking" && (
-              <Card>
-                <label htmlFor="bank" className="text-sm text-muted">Select bank (demo)</label>
-                <select id="bank" className="search-input mt-3">
-                  <option>HDFC Bank</option>
-                  <option>ICICI Bank</option>
-                  <option>SBI</option>
-                  <option>Axis Bank</option>
-                </select>
-              </Card>
-            )}
-
             <Button
               size="lg"
               fullWidth
@@ -167,9 +159,10 @@ export default function PaymentContent() {
 
           <BookingSummary
             property={property}
-            checkIn={checkIn}
-            checkOut={checkOut}
-            guests={guests}
+            checkIn={booking.checkIn}
+            checkOut={booking.checkOut}
+            guests={booking.guests}
+            quote={booking.quote}
           />
         </div>
       </div>

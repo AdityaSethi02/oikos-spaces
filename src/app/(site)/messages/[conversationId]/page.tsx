@@ -1,21 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useState } from "react";
 import { ConversationList } from "@/components/chat/conversation-list";
-import { ChatWindow } from "@/components/chat/chat-window";
-import { conversations, getConversationById } from "@/data/mock/conversations";
-import { useToast } from "@/components/providers/toast-provider";
+import { ConversationThread } from "@/components/chat/conversation-thread";
+import { MessagesPageSkeleton } from "@/components/feedback/data-skeletons";
+import { requireAuthUser } from "@/server/policies/auth.policy";
+import {
+  getConversationForUser,
+  getLinkedBookingReference,
+  listConversationsForUser,
+} from "@/server/services/chat.service";
+import { isDatabaseConfigured } from "@/lib/env";
 
-export default function ConversationPage() {
-  const params = useParams();
-  const { showToast } = useToast();
-  const convId = params.conversationId as string;
-  const conversation = getConversationById(convId);
-  const [messages, setMessages] = useState(conversation?.messages || []);
+export default async function ConversationPage({
+  params,
+}: {
+  params: Promise<{ conversationId: string }>;
+}) {
+  if (!isDatabaseConfigured) {
+    return <MessagesPageSkeleton />;
+  }
 
-  if (!conversation) {
+  const { conversationId } = await params;
+  const user = await requireAuthUser();
+  const conversations = await listConversationsForUser(user);
+
+  try {
+    await getConversationForUser(user, conversationId);
+  } catch {
     return (
       <div className="container-page section-padding text-center">
         <p>Conversation not found</p>
@@ -26,21 +36,18 @@ export default function ConversationPage() {
     );
   }
 
-  const handleSend = (content: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `new-${Date.now()}`,
-        senderId: "guest",
-        senderName: "You",
-        senderRole: "guest" as const,
-        type: "text" as const,
-        content,
-        timestamp: new Date().toISOString(),
-      },
-    ]);
-    showToast("Message sent (demo)", "success");
-  };
+  const conversation = conversations.find((item) => item.id === conversationId);
+  if (!conversation) {
+    return (
+      <div className="container-page section-padding text-center">
+        <p>Conversation not found</p>
+        <Link href="/messages" className="mt-4 inline-block text-accent hover:underline">
+          Back to messages
+        </Link>
+      </div>
+    );
+  }
+  const bookingReference = await getLinkedBookingReference(user, conversationId);
 
   return (
     <div className="flex h-[calc(100dvh-4rem)] flex-col lg:h-[calc(100dvh-4.5rem)]">
@@ -58,17 +65,13 @@ export default function ConversationPage() {
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <div className="hidden w-80 shrink-0 border-r border-border md:block">
-          <ConversationList conversations={conversations} activeId={convId} />
+          <ConversationList conversations={conversations} activeId={conversationId} />
         </div>
         <div className="min-h-0 min-w-0 flex-1">
-          <ChatWindow
-            messages={messages}
-            onSend={handleSend}
+          <ConversationThread
+            conversation={conversation}
+            bookingReference={bookingReference}
             showIdUpload
-            onAttach={(msg) => {
-              setMessages((prev) => [...prev, msg]);
-              showToast("Attachment added (demo)", "success");
-            }}
           />
         </div>
       </div>

@@ -1,0 +1,566 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Users & auth
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  GUEST
+  ADMIN_HOST
+}
+
+model User {
+  id          String    @id @default(cuid())
+  clerkUserId String    @unique
+  role        UserRole  @default(GUEST)
+  name        String?
+  email       String    @unique
+  phone       String?
+  isDemo      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  bookingsAsGuest      Booking[]              @relation("GuestBookings")
+  propertyBlocks       PropertyBlock[]
+  conversationMessages ConversationMessage[]
+  conversationsAsGuest Conversation[]         @relation("ConversationGuest")
+  documents            GuestDocument[]
+  reviews              Review[]
+  favorites            Favorite[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+}
+
+model ContactInquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model RateLimitBucket {
+  key         String   @id
+  count       Int      @default(1)
+  windowStart DateTime @default(now())
+
+  @@index([windowStart])
+}
+
+model PricingRule {
+  id                String   @id @default(cuid())
+  propertyId        String
+  startDate         DateTime @db.Date
+  endDate           DateTime @db.Date
+  nightlyPricePaise Int
+  weekendPricePaise Int?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId, startDate, endDate])
+}
+
+/// Allowed admin/host emails — role is derived from this table at sign-in.
+model HostAccount {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+}
+
+// ---------------------------------------------------------------------------
+// Properties
+// ---------------------------------------------------------------------------
+
+enum PropertyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  HERITAGE_HOME
+}
+
+model Property {
+  id                     String         @id @default(cuid())
+  slug                   String         @unique
+  name                   String
+  tagline                String?
+  description            String
+  about                  String?
+  location               String
+  address                String
+  latitude               Decimal?       @db.Decimal(10, 7)
+  longitude              Decimal?       @db.Decimal(10, 7)
+  type                   PropertyType
+  guests                 Int
+  bedrooms               Int
+  beds                   Int
+  bathrooms              Int
+  basePricePaise         Int
+  weekendPricePaise      Int?
+  cleaningFeePaise       Int            @default(0)
+  checkInTime            String         @default("14:00")
+  checkOutTime           String         @default("11:00")
+  timezone               String         @default("Asia/Kolkata")
+  status                 PropertyStatus @default(ACTIVE)
+  cancellationPolicyText String?
+  houseRules             Json           @default("[]")
+  includedItems          Json           @default("[]")
+  highlights             Json           @default("[]")
+  galleryCount           Int            @default(0)
+  ratingAverage          Decimal        @default(0) @db.Decimal(3, 2)
+  reviewCount            Int            @default(0)
+  shortDescription       String?
+  locality               String?
+  city                   String?
+  state                  String?
+  country                String         @default("India")
+  postalCode             String?
+  serviceFeePaise        Int            @default(0)
+  taxRateBps             Int            @default(0)
+  minStayNights          Int            @default(1)
+  maxStayNights          Int?
+  arrivalInstructions    String?
+  accessInstructions     String?
+  parkingInstructions    String?
+  contactPhone           String?
+  isDemo                 Boolean        @default(false)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  deletedAt              DateTime?
+
+  bedroomDetails PropertyBedroom[]
+  amenities       PropertyAmenity[]
+  reviews         Review[]
+  media           PropertyMedia[]
+  blocks          PropertyBlock[]
+  bookings        Booking[]
+  conversations   Conversation[]
+  calendarFeeds   CalendarFeed[]
+  pricingRules    PricingRule[]
+  favorites       Favorite[]
+
+  @@index([status])
+  @@index([slug])
+}
+
+enum MediaKind {
+  PHOTO
+  VIDEO
+}
+
+model PropertyMedia {
+  id         String    @id @default(cuid())
+  propertyId String
+  kind       MediaKind @default(PHOTO)
+  url        String
+  storageKey String?
+  alt        String?
+  sortOrder  Int       @default(0)
+  isFeatured Boolean   @default(false)
+  playbackId String?
+  createdAt  DateTime  @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId, sortOrder])
+}
+
+enum BlockReason {
+  PERSONAL_USE
+  MAINTENANCE
+  EXTERNAL_BOOKING
+  OTHER
+}
+
+enum BlockSource {
+  MANUAL
+  EXTERNAL
+}
+
+model PropertyBlock {
+  id          String      @id @default(cuid())
+  propertyId  String
+  startDate   DateTime    @db.Date
+  endDate     DateTime    @db.Date
+  reason      BlockReason @default(OTHER)
+  source      BlockSource @default(MANUAL)
+  externalUid String?
+  feedId      String?
+  notes       String?
+  createdById String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  property  Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdBy User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@unique([propertyId, externalUid])
+  @@index([propertyId, startDate, endDate])
+  @@index([feedId])
+}
+
+model PropertyBedroom {
+  id         String @id @default(cuid())
+  propertyId String
+  name       String
+  beds       String
+  sortOrder  Int    @default(0)
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+}
+
+model Amenity {
+  id   String @id @default(cuid())
+  name String @unique
+
+  properties PropertyAmenity[]
+}
+
+model PropertyAmenity {
+  propertyId String
+  amenityId  String
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenity  Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@id([propertyId, amenityId])
+}
+
+// ---------------------------------------------------------------------------
+// Reviews (seed data for Phase 1)
+// ---------------------------------------------------------------------------
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+}
+
+model Review {
+  id         String       @id @default(cuid())
+  propertyId String
+  bookingId  String?      @unique
+  guestId    String?
+  guestName  String
+  rating     Int
+  comment    String
+  response   String?
+  status     ReviewStatus @default(PUBLISHED)
+  reviewDate DateTime     @db.Date
+  isDemo     Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  booking  Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  guest    User?    @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@index([propertyId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Bookings, payments, conversations
+// ---------------------------------------------------------------------------
+
+enum BookingStatus {
+  INQUIRY
+  RESERVED
+  PAYMENT_PENDING
+  CONFIRMED
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum BookingSource {
+  ONLINE
+  DIRECT
+  INQUIRY
+  ADMIN
+}
+
+enum PaymentMethod {
+  RAZORPAY
+  DIRECT
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+model Booking {
+  id                   String         @id @default(cuid())
+  bookingReference     String         @unique
+  propertyId           String
+  guestId              String
+  checkInDate          DateTime       @db.Date
+  checkOutDate         DateTime       @db.Date
+  numberOfGuests       Int
+  status               BookingStatus
+  source               BookingSource  @default(ONLINE)
+  paymentMethod        PaymentMethod?
+  reservedAt           DateTime?
+  reservationExpiresAt DateTime?
+  pricingSnapshot      Json
+  cancellationSnapshot Json?
+  specialRequests      String?
+  idempotencyKey       String?        @unique
+  isDemo               Boolean        @default(false)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  property     Property      @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  guest        User          @relation("GuestBookings", fields: [guestId], references: [id], onDelete: Restrict)
+  payments     Payment[]
+  conversation Conversation?
+  documents    GuestDocument[]
+  checkInOut   CheckInOut?
+  reviews      Review[]
+
+  @@index([propertyId, checkInDate, checkOutDate])
+  @@index([guestId])
+  @@index([status])
+  @@index([reservationExpiresAt])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  bookingId         String
+  provider          String        @default("razorpay")
+  providerOrderId   String?       @unique
+  providerPaymentId String?       @unique
+  amountPaise       Int
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  capturedAt        DateTime?
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  refunds Refund[]
+
+  @@index([bookingId])
+}
+
+model Refund {
+  id               String   @id @default(cuid())
+  paymentId        String
+  amountPaise      Int
+  status           String   @default("PENDING")
+  providerRefundId String?
+  reason           String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model PaymentWebhookEvent {
+  id          String   @id
+  eventType   String
+  processedAt DateTime @default(now())
+  payload     Json
+
+  @@index([eventType])
+}
+
+enum MessageKind {
+  TEXT
+  IMAGE
+  DOCUMENT
+  SYSTEM
+}
+
+enum DocumentStatus {
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+model Conversation {
+  id             String   @id @default(cuid())
+  propertyId     String
+  bookingId      String?  @unique
+  guestId        String
+  tags           String[] @default([])
+  lastMessageAt  DateTime @default(now())
+  guestLastReadAt DateTime?
+  hostLastReadAt  DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  property Property               @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  booking  Booking?               @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  guest    User                   @relation("ConversationGuest", fields: [guestId], references: [id], onDelete: Restrict)
+  messages ConversationMessage[]
+  documents GuestDocument[]
+
+  @@index([guestId, lastMessageAt])
+  @@index([propertyId])
+}
+
+model ConversationMessage {
+  id              String      @id @default(cuid())
+  conversationId  String
+  senderUserId    String?
+  kind            MessageKind @default(TEXT)
+  body            String
+  attachmentKey   String?
+  attachmentName  String?
+  attachmentMime  String?
+  attachmentSize  Int?
+  createdAt       DateTime    @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderUserId], references: [id], onDelete: SetNull)
+
+  @@index([conversationId, createdAt])
+}
+
+model GuestDocument {
+  id             String         @id @default(cuid())
+  bookingId      String
+  guestId        String
+  conversationId String?
+  storageKey     String
+  fileName       String
+  mimeType       String
+  sizeBytes      Int
+  documentType   String         @default("GOVERNMENT_ID")
+  status         DocumentStatus @default(PENDING_REVIEW)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  booking      Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  guest        User          @relation(fields: [guestId], references: [id], onDelete: Restrict)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  @@index([bookingId])
+  @@index([status])
+}
+
+enum NotificationChannel {
+  EMAIL
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+model NotificationOutbox {
+  id             String              @id @default(cuid())
+  channel        NotificationChannel
+  template       String
+  recipient      String
+  payload        Json
+  idempotencyKey String              @unique
+  status         NotificationStatus  @default(PENDING)
+  attempts       Int                 @default(0)
+  lastError      String?
+  scheduledAt    DateTime            @default(now())
+  sentAt         DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([status, scheduledAt])
+}
+
+model CheckInOut {
+  id           String    @id @default(cuid())
+  bookingId    String    @unique
+  checkedInAt  DateTime?
+  checkedOutAt DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+enum CalendarFeedKind {
+  ICAL_EXPORT
+  ICAL_IMPORT
+  GOOGLE
+}
+
+model CalendarFeed {
+  id                 String           @id @default(cuid())
+  propertyId         String
+  kind               CalendarFeedKind
+  importUrl          String?
+  exportToken        String?          @unique
+  googleRefreshToken String?
+  lastSyncedAt       DateTime?
+  lastError          String?
+  enabled            Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, kind])
+  @@index([kind, enabled])
+}
+
+model HostSettings {
+  id                        String   @id @default("default")
+  emailNotifications        Boolean  @default(true)
+  whatsappAlerts            Boolean  @default(false)
+  bookingReminders          Boolean  @default(true)
+  whatsappNumber            String?
+  directPaymentInstructions String?
+  updatedAt                 DateTime @updatedAt
+}

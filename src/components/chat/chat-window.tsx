@@ -7,12 +7,16 @@ import { UploadDocument } from "@/components/forms/upload-document";
 import { Modal } from "@/components/ui/modal";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/data/mock/conversations";
+import type { ChatMessage } from "@/server/dto/domain.dto";
 
 interface ChatWindowProps {
   messages: ChatMessage[];
   onSend?: (message: string) => void;
+  onUploadFile?: (file: File) => void | Promise<void>;
   onAttach?: (message: ChatMessage) => void;
+  onLoadOlder?: () => void;
+  hasMore?: boolean;
+  loadingOlder?: boolean;
   placeholder?: string;
   showIdUpload?: boolean;
 }
@@ -20,7 +24,11 @@ interface ChatWindowProps {
 export function ChatWindow({
   messages,
   onSend,
+  onUploadFile,
   onAttach,
+  onLoadOlder,
+  hasMore,
+  loadingOlder,
   placeholder = "Type a message…",
   showIdUpload = false,
 }: ChatWindowProps) {
@@ -35,7 +43,12 @@ export function ChatWindow({
     setInput("");
   };
 
-  const handleFile = (file: File, type: ChatMessage["type"]) => {
+  const handleFile = async (file: File, type: ChatMessage["type"]) => {
+    if (onUploadFile) {
+      await onUploadFile(file);
+      setAttachOpen(false);
+      return;
+    }
     onAttach?.({
       id: `att-${Date.now()}`,
       senderId: "guest",
@@ -52,7 +65,20 @@ export function ChatWindow({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
+      <div
+        className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6"
+        onScroll={(e) => {
+          const node = e.currentTarget;
+          if (node.scrollTop < 40 && hasMore && !loadingOlder) {
+            onLoadOlder?.();
+          }
+        }}
+      >
+        {hasMore && (
+          <p className="text-center text-xs text-muted">
+            {loadingOlder ? "Loading earlier messages…" : "Scroll up for earlier messages"}
+          </p>
+        )}
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}

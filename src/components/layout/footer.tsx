@@ -51,7 +51,7 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href="/login"
+                  href="/sign-in"
                   className="text-sm text-muted transition-colors hover:text-foreground"
                 >
                   Sign in
@@ -75,9 +75,6 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <p className="text-xs text-muted">
             © {new Date().getFullYear()} {brand.name}. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Demo UI — prices and policies are placeholders
           </p>
         </div>
       </div>

@@ -55,7 +55,7 @@ export function Header() {
             >
               <Icons.Heart className="h-5 w-5" />
             </Link>
-            <ButtonLink href="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
+            <ButtonLink href="/sign-in" variant="outline" size="sm" className="hidden sm:inline-flex">
               Sign in
             </ButtonLink>
             <Link
@@ -110,7 +110,7 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <ButtonLink href="/login" fullWidth className="mt-4">
+          <ButtonLink href="/sign-in" fullWidth className="mt-4">
             Sign in
           </ButtonLink>
         </nav>

@@ -10,7 +10,7 @@ interface UploadDocumentProps {
   title?: string;
   description?: string;
   privacyNote?: string;
-  onUpload?: (file: File) => void;
+  onUpload?: (file: File) => void | Promise<void>;
 }
 
 export function UploadDocument({
@@ -35,8 +35,11 @@ export function UploadDocument({
     }
     setFailed(false);
     setFile(f);
-    onUpload?.(f);
-    showToast("Document uploaded successfully (demo).", "success");
+    if (onUpload) {
+      void Promise.resolve(onUpload(f)).then(() => {
+        showToast("Document uploaded successfully.", "success");
+      });
+    }
   };
 
   return (

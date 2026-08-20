@@ -1,41 +1,51 @@
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import type { PricingSnapshot } from "@/server/dto/public.dto";
+import { paiseToRupees } from "@/server/lib/money";
 
 interface PriceBreakdownProps {
-  pricePerNight: number;
-  nights: number;
+  pricePerNight?: number;
+  nights?: number;
   cleaningFee?: number;
   serviceFee?: number;
   taxes?: number;
   total?: number;
+  snapshot?: PricingSnapshot;
   className?: string;
 }
 
 export function PriceBreakdown({
-  pricePerNight,
-  nights,
-  cleaningFee = 800,
+  pricePerNight = 0,
+  nights = 1,
+  cleaningFee = 0,
   serviceFee,
   taxes,
   total,
+  snapshot,
   className,
 }: PriceBreakdownProps) {
-  const subtotal = pricePerNight * nights;
-  const computedServiceFee = serviceFee ?? Math.round(subtotal * 0.05);
-  const computedTaxes =
-    taxes ?? Math.round((subtotal + cleaningFee + computedServiceFee) * 0.12);
-  const computedTotal =
-    total ?? subtotal + cleaningFee + computedServiceFee + computedTaxes;
+  const rows = snapshot
+    ? snapshot.lineItems.map((item) => ({
+        label: item.label,
+        value: formatCurrency(paiseToRupees(item.amountPaise)),
+      }))
+    : [
+        {
+          label: `${formatCurrency(pricePerNight)} × ${nights} night${nights !== 1 ? "s" : ""}`,
+          value: formatCurrency(pricePerNight * nights),
+        },
+        { label: "Cleaning fee", value: formatCurrency(cleaningFee) },
+        { label: "Service fee", value: formatCurrency(serviceFee ?? 0) },
+        { label: "Taxes & charges", value: formatCurrency(taxes ?? 0) },
+      ];
 
-  const rows = [
-    {
-      label: `${formatCurrency(pricePerNight)} × ${nights} night${nights !== 1 ? "s" : ""}`,
-      value: formatCurrency(subtotal),
-    },
-    { label: "Cleaning fee", value: formatCurrency(cleaningFee) },
-    { label: "Service fee", value: formatCurrency(computedServiceFee) },
-    { label: "Taxes & charges", value: formatCurrency(computedTaxes) },
-  ];
+  const computedTotal = snapshot
+    ? paiseToRupees(snapshot.totalPaise)
+    : (total ??
+      pricePerNight * nights +
+        cleaningFee +
+        (serviceFee ?? 0) +
+        (taxes ?? 0));
 
   return (
     <div className={cn("space-y-3", className)}>

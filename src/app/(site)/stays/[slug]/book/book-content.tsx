@@ -1,53 +1,74 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BookingSummary } from "@/components/booking/booking-summary";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getPropertyBySlug } from "@/data/mock/properties";
+import type { Property } from "@/server/dto/domain.dto";
+import type { QuoteDto } from "@/server/dto/public.dto";
 import { useToast } from "@/components/providers/toast-provider";
 import { Icons } from "@/components/icons";
+import { reserveStayAction } from "@/app/actions/booking.actions";
 
-export default function BookContent() {
-  const params = useParams();
+export default function BookContent({
+  property,
+  quote,
+}: {
+  property: Property;
+  quote: QuoteDto | null;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { showToast } = useToast();
-  const slug = params.slug as string;
-  const property = getPropertyBySlug(slug);
+  const slug = property.slug;
 
   const checkIn = searchParams.get("checkIn") || "2026-09-15";
   const checkOut = searchParams.get("checkOut") || "2026-09-18";
   const guests = Number(searchParams.get("guests") || 2);
 
   const [paymentMethod, setPaymentMethod] = useState<"online" | "direct">("online");
+  const [loading, setLoading] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [specialRequests, setSpecialRequests] = useState("");
 
-  if (!property) {
-    return (
-      <div className="container-page section-padding">
-        <p className="text-muted">This stay could not be found.</p>
-        <Link href="/stays" className="mt-4 inline-block text-accent hover:underline">
-          Browse stays
-        </Link>
-      </div>
-    );
-  }
-
-  const handleContinue = () => {
-    if (paymentMethod === "online") {
-      router.push(
-        `/bookings/BK123456/payment?property=${slug}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`,
-      );
-    } else {
+  const handleContinue = async () => {
+    if (paymentMethod === "direct") {
       router.push(
         `/stays/${slug}/contact-host?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`,
       );
+      return;
     }
-    showToast("Proceeding to next step (demo)", "info");
+
+    setLoading(true);
+    const result = await reserveStayAction({
+      slug,
+      checkIn,
+      checkOut,
+      guests,
+      specialRequests: [guestName && `Guest: ${guestName}`, specialRequests]
+        .filter(Boolean)
+        .join("\n"),
+      paymentMethod: "online",
+    });
+    setLoading(false);
+
+    if (!result.ok) {
+      showToast(result.error, "error");
+      if (result.code === "UNAUTHORIZED") {
+        router.push(
+          `/sign-in?next=${encodeURIComponent(`/stays/${slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}`,
+        );
+      }
+      return;
+    }
+
+    router.push(
+      `/bookings/${result.bookingReference}/payment?property=${slug}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`,
+    );
   };
 
   return (
@@ -66,13 +87,18 @@ export default function BookContent() {
             <Card>
               <h2 className="font-serif text-xl">Guest details</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <Input label="Full name" placeholder="Your name" defaultValue="Guest User" />
-                <Input label="Email" type="email" placeholder="you@example.com" defaultValue="guest@example.com" />
-                <Input label="Phone" type="tel" placeholder="+91" defaultValue="+91 98765 00000" />
-                <Input label="Number of guests" type="number" defaultValue={String(guests)} />
+                <Input label="Full name" placeholder="Your name" value={guestName} onChange={(e) => setGuestName(e.target.value)} />
+                <Input label="Email" type="email" placeholder="you@example.com" />
+                <Input label="Phone" type="tel" placeholder="+91" />
+                <Input label="Number of guests" type="number" defaultValue={String(guests)} readOnly />
               </div>
               <div className="mt-4">
-                <Textarea label="Special requests" placeholder="Any special requests or questions…" />
+                <Textarea
+                  label="Special requests"
+                  placeholder="Any special requests or questions…"
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
+                />
               </div>
             </Card>
 
@@ -98,8 +124,8 @@ export default function BookContent() {
               </div>
             </Card>
 
-            <Button size="lg" fullWidth onClick={handleContinue} className="lg:hidden">
-              Continue
+            <Button size="lg" fullWidth onClick={handleContinue} className="lg:hidden" disabled={loading}>
+              {loading ? "Reserving…" : "Continue"}
             </Button>
           </div>
 
@@ -109,10 +135,11 @@ export default function BookContent() {
               checkIn={checkIn}
               checkOut={checkOut}
               guests={guests}
+              quote={quote}
               collapsible
             />
-            <Button size="lg" fullWidth onClick={handleContinue} className="hidden lg:flex">
-              Continue to payment
+            <Button size="lg" fullWidth onClick={handleContinue} className="hidden lg:flex" disabled={loading}>
+              {loading ? "Reserving…" : "Continue to payment"}
             </Button>
           </div>
         </div>

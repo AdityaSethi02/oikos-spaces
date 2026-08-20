@@ -43,11 +43,7 @@ export function DatePicker({
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [selecting, setSelecting] = useState<"in" | "out">("in");
 
-  const defaultUnavailable = [
-    "2026-09-01", "2026-09-02", "2026-09-03",
-    "2026-10-10", "2026-10-11",
-  ];
-  const blocked = new Set([...defaultUnavailable, ...unavailableDates]);
+  const blocked = new Set(unavailableDates);
 
   const handleDayClick = (day: number) => {
     const dateStr = formatDateStr(viewYear, viewMonth, day);

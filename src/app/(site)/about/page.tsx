@@ -1,4 +1,4 @@
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { EditorialImage } from "@/components/media/editorial-image";
 import { ButtonLink } from "@/components/ui/button";
 import { brand } from "@/lib/brand";
 
@@ -20,7 +20,7 @@ export default function AboutPage() {
 
       <section className="section-padding">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
-          <ImagePlaceholder variant="lifestyle" seed={0} label="Our hospitality" />
+          <EditorialImage variant="warm" label="Our hospitality" className="min-h-[320px]" />
           <div>
             <h2 className="font-serif text-3xl">Personally hosted</h2>
             <p className="mt-4 leading-relaxed text-muted">
@@ -35,7 +35,7 @@ export default function AboutPage() {
       <section className="section-padding bg-surface">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
           <div className="lg:order-2">
-            <ImagePlaceholder variant="lifestyle" seed={1} label="Thoughtful design" />
+            <EditorialImage variant="cool" label="Thoughtful design" className="min-h-[320px]" />
           </div>
           <div className="lg:order-1">
             <h2 className="font-serif text-3xl">Thoughtfully designed</h2>

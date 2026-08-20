@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { requireAuthUser } from "@/server/policies/auth.policy";
 
-export const metadata: Metadata = { title: "Saved stays" };
+export const dynamic = "force-dynamic";
 
-export default function FavoritesLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = { title: "Favorites" };
+
+export default async function FavoritesLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  await requireAuthUser();
   return children;
 }

@@ -1,50 +1,27 @@
-"use client";
+import { requireAuthUser } from "@/server/policies/auth.policy";
+import { listFavoriteProperties } from "@/server/services/favorites.service";
+import { PropertyGridSkeleton } from "@/components/feedback/data-skeletons";
+import { FavoritesList } from "./favorites-list";
+import { isDatabaseConfigured } from "@/lib/env";
 
-import { PropertyCard } from "@/components/property/property-card";
-import { ButtonLink } from "@/components/ui/button";
-import { EmptyState } from "@/components/feedback/empty-state";
-import { useFavorites } from "@/components/providers/favorites-provider";
-import { properties } from "@/data/mock/properties";
-import { Icons } from "@/components/icons";
+export const metadata = { title: "Saved stays" };
+export const dynamic = "force-dynamic";
 
-export default function FavoritesPage() {
-  const { favorites } = useFavorites();
-  const saved = properties.filter((p) => favorites.includes(p.id));
-
-  if (saved.length === 0) {
+export default async function FavoritesPage() {
+  if (!isDatabaseConfigured) {
     return (
       <div className="section-padding">
         <div className="container-page">
           <h1 className="font-serif text-3xl">Saved stays</h1>
-          <EmptyState
-            className="mt-10"
-            title="You haven't saved any stays yet"
-            description="Tap the heart on any property to save it for later."
-            actionLabel="Explore stays"
-            actionHref="/stays"
-            icon={<Icons.Heart className="h-6 w-6" />}
-          />
+          <div className="mt-8">
+            <PropertyGridSkeleton count={3} />
+          </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="section-padding">
-      <div className="container-page">
-        <h1 className="font-serif text-3xl">Saved stays</h1>
-        <p className="mt-2 text-muted">{saved.length} saved propert{saved.length !== 1 ? "ies" : "y"}</p>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {saved.map((property) => (
-            <div key={property.id} className="space-y-3">
-              <PropertyCard property={property} />
-              <ButtonLink href={`/stays/${property.slug}/availability`} variant="outline" size="sm" fullWidth>
-                Check availability
-              </ButtonLink>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  const user = await requireAuthUser();
+  const properties = await listFavoriteProperties(user);
+  return <FavoritesList properties={properties} />;
 }

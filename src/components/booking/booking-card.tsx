@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { GuestSelector } from "@/components/booking/guest-selector";
 import { EmptyState } from "@/components/feedback/empty-state";
-import type { Property } from "@/data/mock/properties";
+import type { Property } from "@/server/dto/domain.dto";
+import type { QuoteDto } from "@/server/dto/public.dto";
 import { calculateNights, formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -22,11 +23,32 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
   const [checkOut, setCheckOut] = useState("2026-09-18");
   const [guests, setGuests] = useState(2);
   const [showCalendar, setShowCalendar] = useState(true);
+  const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+  const [quote, setQuote] = useState<QuoteDto | null>(null);
 
   const nights = checkIn && checkOut ? calculateNights(checkIn, checkOut) : 0;
-  const noDates = Boolean(checkIn && !checkOut);
-  const bookHref = `/login?next=${encodeURIComponent(`/stays/${property.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}`;
+  const hasCompleteDates = Boolean(checkIn && checkOut);
+  const displayQuote = hasCompleteDates ? quote : null;
+  const bookHref = `/sign-in?next=${encodeURIComponent(`/stays/${property.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}`;
   const contactHref = `/stays/${property.slug}/contact-host?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+
+  useEffect(() => {
+    fetch(`/api/properties/${property.slug}/availability`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { unavailableDates?: string[] } | null) => {
+        if (data?.unavailableDates) setUnavailableDates(data.unavailableDates);
+      })
+      .catch(() => undefined);
+  }, [property.slug]);
+
+  useEffect(() => {
+    if (!hasCompleteDates) return;
+    const params = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
+    fetch(`/api/properties/${property.slug}/quote?${params}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: QuoteDto | null) => setQuote(data))
+      .catch(() => setQuote(null));
+  }, [property.slug, checkIn, checkOut, guests, hasCompleteDates]);
 
   return (
     <Card
@@ -66,6 +88,7 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
           <DatePicker
             checkIn={checkIn}
             checkOut={checkOut}
+            unavailableDates={unavailableDates}
             onSelect={(inDate, outDate) => {
               setCheckIn(inDate);
               setCheckOut(outDate);
@@ -76,7 +99,7 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
         <GuestSelector value={guests} onChange={setGuests} max={property.guests} />
       </div>
 
-      {noDates && (
+      {checkIn && !checkOut && (
         <EmptyState
           className="mt-5 py-8"
           title="Select check-out"
@@ -87,9 +110,13 @@ export function BookingCard({ property, sticky = true, className }: BookingCardP
       {nights > 0 && (
         <div className="mt-5">
           <PriceBreakdown
-            pricePerNight={property.pricePerNight}
+            snapshot={displayQuote?.snapshot}
+            pricePerNight={displayQuote?.averageNightlyRupees ?? property.pricePerNight}
             nights={nights}
-            cleaningFee={property.cleaningFee}
+            cleaningFee={displayQuote?.cleaningFeeRupees ?? property.cleaningFee}
+            serviceFee={displayQuote?.serviceFeeRupees ?? 0}
+            taxes={displayQuote?.taxRupees ?? 0}
+            total={displayQuote?.totalRupees}
           />
         </div>
       )}

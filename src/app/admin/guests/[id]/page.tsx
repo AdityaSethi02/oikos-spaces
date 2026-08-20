@@ -1,95 +1,123 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
-import { FileAttachment } from "@/components/chat/file-attachment";
-import { getGuestById, documents } from "@/data/mock/admin";
-import { getBookingsWithProperty } from "@/data/mock/bookings";
-import { conversations } from "@/data/mock/conversations";
+import { BookingStatusBadge } from "@/components/ui/badge";
+import { AdminGuestDetailSkeleton } from "@/components/feedback/data-skeletons";
+import { getAdminGuestDetail } from "@/server/services/admin-guest.service";
+import { isDatabaseConfigured } from "@/lib/env";
+import { formatCurrency } from "@/lib/utils";
 
-interface Props {
+export const dynamic = "force-dynamic";
+
+export default async function AdminGuestDetailPage({
+  params,
+}: {
   params: Promise<{ id: string }>;
-}
+}) {
+  if (!isDatabaseConfigured) {
+    return <AdminGuestDetailSkeleton />;
+  }
 
-export async function generateStaticParams() {
-  const { guests } = await import("@/data/mock/admin");
-  return guests.map((guest) => ({ id: guest.id }));
-}
-
-export default async function AdminGuestDetailPage({ params }: Props) {
   const { id } = await params;
-  const guest = getGuestById(id);
-  if (!guest) notFound();
+  const guest = await getAdminGuestDetail(id);
+  if (!guest) {
+    return (
+      <div className="text-center">
+        <p className="text-muted">Guest not found</p>
+        <Link href="/admin/guests" className="mt-4 inline-block text-accent hover:underline">
+          Back to guests
+        </Link>
+      </div>
+    );
+  }
 
-  const bookings = getBookingsWithProperty().filter((b) => b.guestEmail === guest.email);
-  const convos = conversations.filter((c) => c.guestEmail === guest.email);
-  const docs = documents.filter((d) => d.guestName === guest.name);
-  const upcoming = bookings.filter(
-    (b) => b.bookingStatus === "confirmed" || b.bookingStatus === "payment_pending" || b.bookingStatus === "checked_in",
+  const upcoming = guest.bookings.filter((b) =>
+    ["inquiry", "reserved", "payment_pending", "confirmed", "checked_in"].includes(b.bookingStatus),
   );
-  const past = bookings.filter((b) => b.bookingStatus === "checked_out" || b.bookingStatus === "cancelled");
+  const past = guest.bookings.filter((b) =>
+    ["checked_out", "cancelled", "expired"].includes(b.bookingStatus),
+  );
 
   return (
     <div>
       <Link href="/admin/guests" className="text-sm text-muted hover:text-foreground">← Guests</Link>
       <h1 className="mt-4 font-serif text-2xl sm:text-3xl">{guest.name}</h1>
-      <p className="mt-1 text-sm text-muted">{guest.email} · {guest.phone}</p>
+      <p className="mt-1 text-sm text-muted">{guest.email}{guest.phone ? ` · ${guest.phone}` : ""}</p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="font-serif text-lg">Upcoming</h2>
-          <div className="mt-4 space-y-2 text-sm">
-            {upcoming.length === 0 && <p className="text-muted">No upcoming stays</p>}
-            {upcoming.map((b) => (
-              <p key={b.id}>#{b.id} · {b.property.name} · {b.checkIn} – {b.checkOut}</p>
-            ))}
-          </div>
+          <h2 className="font-serif text-lg">Upcoming / active</h2>
+          {upcoming.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">None</p>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {upcoming.map((b) => (
+                <li key={b.id} className="text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium">{b.property.name}</span>
+                    <BookingStatusBadge status={b.bookingStatus} />
+                  </div>
+                  <p className="text-muted">{b.checkIn} – {b.checkOut} · {formatCurrency(b.amount)}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
+
         <Card>
-          <h2 className="font-serif text-lg">Past bookings</h2>
-          <div className="mt-4 space-y-2 text-sm">
-            {past.length === 0 && <p className="text-muted">No past stays</p>}
-            {past.map((b) => (
-              <p key={b.id}>#{b.id} · {b.property.name} · {b.bookingStatus.replace("_", " ")}</p>
-            ))}
-          </div>
+          <h2 className="font-serif text-lg">Past</h2>
+          {past.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">None</p>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {past.map((b) => (
+                <li key={b.id} className="text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium">{b.property.name}</span>
+                    <BookingStatusBadge status={b.bookingStatus} />
+                  </div>
+                  <p className="text-muted">{b.checkIn} – {b.checkOut}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
+
         <Card>
           <h2 className="font-serif text-lg">Conversations</h2>
-          <div className="mt-4 space-y-2">
-            {convos.map((c) => (
-              <Link key={c.id} href="/admin/messages" className="block text-sm hover:text-accent">
-                {c.propertyName} · {c.lastMessage}
-              </Link>
-            ))}
-            {convos.length === 0 && <p className="text-sm text-muted">No conversations</p>}
-          </div>
+          {guest.conversations.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">None</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {guest.conversations.map((c) => (
+                <li key={c.id}>
+                  <Link href={`/admin/messages?c=${c.id}`} className="text-sm hover:text-accent">
+                    {c.propertyName} — {c.lastMessage.slice(0, 60)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
+
         <Card>
           <h2 className="font-serif text-lg">Documents</h2>
-          <p className="mt-2 text-xs text-muted">Visible only to the host for this booking. Do not share outside the stay.</p>
-          <div className="mt-4 space-y-3">
-            {docs.map((d) => (
-              <FileAttachment key={d.id} fileName={d.fileName} fileType={d.documentType} status="uploaded" />
-            ))}
-            {docs.length === 0 && <p className="text-sm text-muted">No documents on file</p>}
-          </div>
-        </Card>
-        <Card>
-          <h2 className="font-serif text-lg">Check-in / check-out history</h2>
-          <ul className="mt-4 space-y-2 text-sm text-muted">
-            {bookings.map((b) => (
-              <li key={b.id}>
-                #{b.id}: {b.checkIn} in · {b.checkOut} out · {b.bookingStatus.replace("_", " ")}
-              </li>
-            ))}
-          </ul>
+          {guest.documents.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">None</p>
+          ) : (
+            <ul className="mt-3 space-y-2 text-sm">
+              {guest.documents.map((d) => (
+                <li key={d.id}>
+                  {d.fileName} · {d.bookingReference} · {d.status}
+                </li>
+              ))}
+            </ul>
+          )}
+          <ButtonLink href="/admin/documents" variant="outline" size="sm" className="mt-4">
+            View all documents
+          </ButtonLink>
         </Card>
       </div>
-
-      <ButtonLink href="/admin/messages" className="mt-6">
-        Open messages
-      </ButtonLink>
     </div>
   );
 }

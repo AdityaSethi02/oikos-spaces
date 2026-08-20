@@ -34,6 +34,7 @@ export const navigation = {
     { label: "Documents", href: "/admin/documents" },
     { label: "Payments", href: "/admin/payments" },
     { label: "Reviews", href: "/admin/reviews" },
+    { label: "Team", href: "/admin/users" },
     { label: "Settings", href: "/admin/settings" },
   ],
 } as const;

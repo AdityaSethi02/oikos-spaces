@@ -1,22 +1,26 @@
-"use client";
-
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { BookingCard } from "@/components/booking/booking-card";
-import { getPropertyBySlug } from "@/data/mock/properties";
+import { BookingFlowSkeleton } from "@/components/feedback/data-skeletons";
+import { getPublicPropertyBySlug } from "@/server/services/property.service";
+import { isDatabaseConfigured } from "@/lib/env";
 
-export default function AvailabilityPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const property = getPropertyBySlug(slug);
+export const dynamic = "force-dynamic";
 
-  if (!property) {
-    return (
-      <div className="container-page section-padding">
-        <p>Property not found</p>
-      </div>
-    );
+export const metadata = { title: "Select dates" };
+
+export default async function AvailabilityPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  if (!isDatabaseConfigured) {
+    return <BookingFlowSkeleton />;
   }
+
+  const { slug } = await params;
+  const property = await getPublicPropertyBySlug(slug);
+  if (!property) notFound();
 
   return (
     <div className="section-padding">

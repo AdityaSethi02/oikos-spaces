@@ -1,5 +1,5 @@
 import { amenityIcons, Icons } from "@/components/icons";
-import type { Amenity } from "@/data/mock/properties";
+import type { Amenity } from "@/server/dto/domain.dto";
 import { cn } from "@/lib/utils";
 
 interface PropertyAmenitiesProps {

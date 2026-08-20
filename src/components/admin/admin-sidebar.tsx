@@ -41,28 +41,42 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile header */}
-      <div className="flex items-center justify-between bg-stone-900 px-4 py-3 lg:hidden">
-        <Link href="/admin" className="font-serif text-lg text-white">
+      <div className="flex items-center justify-between gap-3 bg-stone-900 px-4 py-3 lg:hidden">
+        <Link href="/admin" className="min-w-0 shrink font-serif text-lg text-white">
           {brand.name}
         </Link>
-        <button
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-stone-300 hover:bg-stone-800"
-          aria-label="Open admin menu"
-        >
-          <Icons.Menu className="h-6 w-6" />
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-stone-300 hover:bg-stone-800"
+            aria-label="Open admin menu"
+          >
+            <Icons.Menu className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        title="Admin Menu"
+        title="Host Dashboard"
         side="left"
         className="max-w-xs bg-stone-900 text-white border-stone-800"
       >
-        <div className="bg-stone-900">{navContent}</div>
+        <div className="flex h-full flex-col bg-stone-900">
+          <div className="flex-1">{navContent}</div>
+          <div className="border-t border-stone-800 p-4">
+            <Link
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className="inline-flex min-h-11 items-center gap-1.5 text-sm text-stone-400 hover:text-white"
+            >
+              <Icons.ArrowLeft className="h-4 w-4" />
+              Back to website
+            </Link>
+          </div>
+        </div>
       </Drawer>
 
       {/* Desktop sidebar */}
