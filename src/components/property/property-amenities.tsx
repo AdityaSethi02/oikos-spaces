@@ -27,7 +27,7 @@ export function PropertyAmenities({
         const Icon = amenityIcons[amenity] || Icons.Check;
         return (
           <div key={amenity} className="flex items-center gap-3 text-sm text-foreground">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-light text-accent">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-light text-support">
               <Icon className="h-4 w-4" aria-hidden />
             </span>
             {amenity}
@@ -46,9 +46,9 @@ export function AmenityPills({ amenities }: { amenities: string[] }) {
         return (
           <span
             key={a}
-            className="inline-flex items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-xs text-muted"
+            className="inline-flex items-center gap-1.5 rounded-md bg-surface-elevated px-2.5 py-1 text-xs text-muted"
           >
-            <Icon className="h-3.5 w-3.5" aria-hidden />
+            <Icon className="h-3.5 w-3.5 text-support" aria-hidden />
             {a}
           </span>
         );

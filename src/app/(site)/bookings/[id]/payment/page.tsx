@@ -11,5 +11,5 @@ export async function generateStaticParams() {
 
 export default async function PaymentRedirect({ params }: Props) {
   void (await params);
-  redirect("/messages");
+  redirect("/contact");
 }

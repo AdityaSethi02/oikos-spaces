@@ -25,7 +25,8 @@ export function Card({
       className={cn(
         "rounded-xl border border-border bg-surface shadow-soft",
         paddingMap[padding],
-        hover && "transition-shadow hover:shadow-md",
+        hover &&
+          "transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md",
         className,
       )}
       {...props}

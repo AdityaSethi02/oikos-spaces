@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function ConfirmationRedirectPage() {
-  redirect("/messages");
+  redirect("/contact");
 }

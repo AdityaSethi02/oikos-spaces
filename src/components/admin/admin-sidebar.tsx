@@ -60,7 +60,8 @@ export function AdminSidebar() {
         onClose={() => setMobileOpen(false)}
         title="Admin Menu"
         side="left"
-        className="max-w-xs bg-stone-900 text-white border-stone-800"
+        fullWidth
+        className="bg-stone-900 text-white border-stone-800"
       >
         <div className="bg-stone-900">{navContent}</div>
       </Drawer>

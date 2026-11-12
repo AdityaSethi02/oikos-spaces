@@ -49,7 +49,8 @@ export function Select({
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (event: MouseEvent) => {
+    // pointerdown covers mouse + touch; ignore events inside the control
+    const onPointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
@@ -57,10 +58,10 @@ export function Select({
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
-    window.addEventListener("mousedown", onPointerDown);
+    window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      window.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
@@ -73,7 +74,7 @@ export function Select({
   };
 
   return (
-    <div ref={rootRef} className={cn("relative w-full", className)}>
+    <div ref={rootRef} className={cn("relative z-10 w-full", open && "z-30", className)}>
       {label && (
         <label
           htmlFor={selectId}
@@ -95,14 +96,14 @@ export function Select({
         onClick={() => setOpen((v) => !v)}
         onKeyDown={onTriggerKeyDown}
         className={cn(
-          "search-input flex cursor-pointer items-center justify-between gap-2 text-left",
+          "search-input flex min-h-11 w-full cursor-pointer items-center justify-between gap-2 text-left transition-colors",
           !selected && "text-muted-foreground",
         )}
       >
         <span className="truncate">{selected?.label || placeholder}</span>
         <Icons.ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-muted transition-transform",
+            "h-4 w-4 shrink-0 text-muted transition-transform duration-200",
             open && "rotate-180",
           )}
           aria-hidden
@@ -114,7 +115,8 @@ export function Select({
           id={listId}
           role="listbox"
           aria-labelledby={selectId}
-          className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-surface py-1 shadow-soft"
+          className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-surface py-1 shadow-soft animate-fade-in"
+          style={{ animationDuration: "160ms" }}
         >
           {options.map((option) => {
             const isActive = option.value === value;
@@ -125,10 +127,14 @@ export function Select({
                   role="option"
                   aria-selected={isActive}
                   className={cn(
-                    "flex w-full cursor-pointer items-center px-3 py-2.5 text-left text-sm transition-colors",
+                    "flex min-h-11 w-full cursor-pointer items-center px-3 py-2.5 text-left text-sm transition-colors",
                     "hover:bg-accent-light hover:text-accent",
                     isActive && "bg-accent-light font-medium text-accent",
                   )}
+                  onPointerDown={(event) => {
+                    // Prevent outside-close / ghost click races on touch devices
+                    event.stopPropagation();
+                  }}
                   onClick={() => {
                     onChange(option.value);
                     setOpen(false);

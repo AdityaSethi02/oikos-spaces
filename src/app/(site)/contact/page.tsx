@@ -7,30 +7,36 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { PropertyImage } from "@/components/media/property-image";
-import { brand, whatsappLink } from "@/lib/brand";
+import { Icons } from "@/components/icons";
+import { brand, enquiryInterests, whatsappLink } from "@/lib/brand";
 import { brandImages } from "@/lib/media";
 import { useToast } from "@/components/providers/toast-provider";
 
 export default function ContactPage() {
   const { showToast } = useToast();
-  const [intent, setIntent] = useState("buy");
+  const [interest, setInterest] = useState<string>(enquiryInterests[0].value);
 
   return (
     <div className="section-padding">
       <div className="container-page">
-        <h1 className="font-serif text-3xl sm:text-4xl">Contact us</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl">Book a consultation</h1>
         <p className="mt-2 text-muted">
-          Tell us what you&apos;re looking for — buy, sell, rent or lease. We respond fast.
+          Tell us what you&apos;re looking for — buy, sell, rent, NRI support or documentation help.
+          We respond fast.
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-2">
           <div className="space-y-6">
             <Card>
-              <h2 className="font-serif text-xl">Get in touch</h2>
+              <h2 className="font-serif text-xl">Visit & reach us</h2>
               <dl className="mt-6 space-y-4 text-sm">
                 <div>
                   <dt className="text-muted">Email</dt>
-                  <dd className="mt-1 font-medium">{brand.contact.email}</dd>
+                  <dd className="mt-1 font-medium">
+                    <a href={`mailto:${brand.contact.email}`} className="hover:text-accent">
+                      {brand.contact.email}
+                    </a>
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-muted">Phone</dt>
@@ -67,7 +73,7 @@ export default function ContactPage() {
               </dl>
               <div className="mt-6 flex flex-wrap gap-2">
                 <ButtonLink
-                  href={whatsappLink("Hi, I'd like a callback about a property.")}
+                  href={whatsappLink("Hi, I'd like a consultation about a property.")}
                   size="sm"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -82,6 +88,35 @@ export default function ContactPage() {
                   Call now
                 </ButtonLink>
               </div>
+              <div className="mt-6 flex items-center gap-2 border-t border-border pt-5">
+                <a
+                  href={brand.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:bg-background hover:text-foreground"
+                  aria-label="Instagram"
+                >
+                  <Icons.Instagram className="h-5 w-5" />
+                </a>
+                <a
+                  href={brand.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:bg-background hover:text-foreground"
+                  aria-label="Facebook"
+                >
+                  <Icons.Facebook className="h-5 w-5" />
+                </a>
+                <a
+                  href={brand.social.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:bg-background hover:text-foreground"
+                  aria-label="YouTube"
+                >
+                  <Icons.Youtube className="h-5 w-5" />
+                </a>
+              </div>
             </Card>
 
             <div className="aspect-[16/9] overflow-hidden rounded-xl">
@@ -95,26 +130,24 @@ export default function ContactPage() {
               className="mt-6 space-y-4"
               onSubmit={(e) => {
                 e.preventDefault();
-                showToast("Callback request received (demo)!", "success");
+                showToast("Consultation request received (demo)!", "success");
               }}
             >
               <Input label="Name" placeholder="Your name" required />
               <Input label="Phone" type="tel" placeholder="+91" required />
               <Input label="Email" type="email" placeholder="you@example.com" />
               <div>
-                <p className="mb-1.5 text-sm font-medium">I want to</p>
+                <p className="mb-1.5 text-sm font-medium">I&apos;m interested in</p>
                 <Select
-                  aria-label="I want to"
-                  name="intent"
+                  aria-label="I'm interested in"
+                  name="interest"
                   required
-                  value={intent}
-                  onChange={setIntent}
-                  options={[
-                    { value: "buy", label: "Buy a property" },
-                    { value: "sell", label: "Sell a property" },
-                    { value: "rent", label: "Rent / lease" },
-                    { value: "other", label: "Something else" },
-                  ]}
+                  value={interest}
+                  onChange={setInterest}
+                  options={enquiryInterests.map((item) => ({
+                    value: item.value,
+                    label: item.label,
+                  }))}
                 />
               </div>
               <Input label="Budget / expected price" placeholder="e.g. ₹1.5 Cr or ₹30,000/mo" />
@@ -125,7 +158,7 @@ export default function ContactPage() {
                 rows={4}
               />
               <Button type="submit" fullWidth>
-                Request callback
+                Book consultation
               </Button>
             </form>
           </Card>

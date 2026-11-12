@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { PropertyCard } from "@/components/property/property-card";
 import { Drawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ import { formatCurrency, cn } from "@/lib/utils";
 type Intent = "All" | "For Sale" | "For Rent" | "For Lease";
 
 export function PropertiesContent() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const initialLocality = searchParams.get("locality") || "All";
   const initialStatus = searchParams.get("status");
@@ -37,6 +39,17 @@ export function PropertiesContent() {
   );
   const [types, setTypes] = useState<PropertyType[]>([...allPropertyTypes]);
   const [locality, setLocality] = useState<string>(initialLocality);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (locality !== "All") params.set("locality", locality);
+    if (intent !== "All") params.set("status", intent);
+    if (minBedrooms > 0) params.set("beds", String(minBedrooms));
+    const nextQs = params.toString();
+    const currentQs = searchParams.toString();
+    if (nextQs === currentQs) return;
+    router.replace(nextQs ? `${pathname}?${nextQs}` : pathname, { scroll: false });
+  }, [locality, intent, minBedrooms, pathname, router, searchParams]);
 
   const filtered = useMemo(
     () =>
@@ -90,35 +103,34 @@ export function PropertiesContent() {
           </Button>
         </div>
 
-        {/* Primary intent */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {intents.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setIntent(item)}
-              className={cn("chip shrink-0", intent === item && "chip-active")}
-            >
-              {item === "All" ? "All listings" : item.replace("For ", "")}
-            </button>
-          ))}
+        <div className="chip-scroll">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {intents.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setIntent(item)}
+                className={cn("chip shrink-0", intent === item && "chip-active")}
+              >
+                {item === "All" ? "All listings" : item.replace("For ", "")}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Locality chips */}
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-          {topLocalities.map((l) => (
-            <button
-              key={l}
-              type="button"
-              onClick={() => setLocality(l)}
-              className={cn(
-                "chip shrink-0",
-                locality === l && "chip-active",
-              )}
-            >
-              {l === "All" ? "All localities" : l}
-            </button>
-          ))}
+        <div className="chip-scroll mt-3">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {topLocalities.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLocality(l)}
+                className={cn("chip shrink-0", locality === l && "chip-active")}
+              >
+                {l === "All" ? "All localities" : l}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-8 flex gap-8">
@@ -162,7 +174,12 @@ export function PropertiesContent() {
         </div>
       </div>
 
-      <Drawer open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filters">
+      <Drawer
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filters"
+        fullWidth
+      >
         <div className="p-4">
           <FilterPanel
             maxPrice={maxPrice}

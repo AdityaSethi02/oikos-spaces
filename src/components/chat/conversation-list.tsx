@@ -19,7 +19,7 @@ interface ConversationListProps {
 export function ConversationList({
   conversations,
   activeId,
-  basePath = "/messages",
+  basePath = "/admin/messages",
   filters,
   activeFilter,
   onFilterChange,

@@ -1,5 +1,4 @@
 import { brand } from "@/lib/brand";
-import { getPropertyBySlug } from "@/data/mock/properties";
 
 export type MessageType = "text" | "image" | "document" | "system";
 
@@ -213,56 +212,3 @@ export function getConversationByPropertySlug(slug: string): Conversation | unde
   return conversations.find((c) => c.propertySlug === slug);
 }
 
-/** Route buyers into an existing thread or a new enquiry chat. */
-export function getDealerChatHref(propertyId: string, propertySlug: string): string {
-  const existing = getConversationByPropertyId(propertyId);
-  if (existing) return `/messages/${existing.id}`;
-  return `/messages/new?property=${encodeURIComponent(propertySlug)}`;
-}
-
-export function createEnquiryConversation(propertySlug: string): Conversation | null {
-  const existing = getConversationByPropertySlug(propertySlug);
-  if (existing) return existing;
-
-  const property = getPropertyBySlug(propertySlug);
-  if (!property) return null;
-
-  const tag: ConversationTag =
-    property.status === "For Rent" || property.status === "For Lease"
-      ? "rental_enquiry"
-      : "buying_enquiry";
-
-  return {
-    id: `conv-new-${property.id}`,
-    propertyId: property.id,
-    propertyName: property.name,
-    propertySlug: property.slug,
-    guestName: "You",
-    guestEmail: "you@example.com",
-    lastMessage: `Hi, I'm interested in ${property.name}.`,
-    lastMessageAt: new Date().toISOString(),
-    unread: false,
-    tags: [tag],
-    isDemo: true,
-    messages: [
-      {
-        id: `sys-${property.id}`,
-        senderId: "system",
-        senderName: "System",
-        senderRole: "dealer",
-        type: "system",
-        content: `Enquiry started for ${property.name} · ${property.status}`,
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: `seed-${property.id}`,
-        senderId: "buyer-you",
-        senderName: "You",
-        senderRole: "buyer",
-        type: "text",
-        content: `Hi, I'm interested in ${property.name} (${property.priceLabel}) at ${property.location}. Please share more details and availability for a site visit.`,
-        timestamp: new Date().toISOString(),
-      },
-    ],
-  };
-}

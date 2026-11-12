@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* Cool stone + lake teal — clear RE identity, not hospitality cream */
+  /* Fallbacks = theme 0; overridden at runtime from src/lib/themes.ts */
   --background: #f4f6f5;
   --foreground: #15202b;
   --surface: #ffffff;
@@ -9,7 +9,19 @@
   --muted-foreground: #8a9aa3;
   --border: #d8e0e3;
   --accent: #0f6b5c;
+  --accent-foreground: #ffffff;
   --accent-light: #e6f3f0;
+  --highlight: #0f6b5c;
+  --secondary: #ffffff;
+  --secondary-foreground: #15202b;
+  --header: #f4f6f5;
+  --header-foreground: #15202b;
+  --header-muted: #5c6b73;
+  --footer: #ffffff;
+  --footer-foreground: #15202b;
+  --footer-muted: #5c6b73;
+  --footer-border: #d8e0e3;
+  --hero-overlay: #15202b;
   --success: #15803d;
   --warning: #b45309;
   --error: #b91c1c;
@@ -29,7 +41,19 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-accent-light: var(--accent-light);
+  --color-highlight: var(--highlight);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-header: var(--header);
+  --color-header-foreground: var(--header-foreground);
+  --color-header-muted: var(--header-muted);
+  --color-footer: var(--footer);
+  --color-footer-foreground: var(--footer-foreground);
+  --color-footer-muted: var(--footer-muted);
+  --color-footer-border: var(--footer-border);
+  --color-hero-overlay: var(--hero-overlay);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
@@ -66,7 +90,6 @@
     touch-action: manipulation;
   }
 
-  /* Pointer on all interactive controls */
   a,
   button,
   [role="button"],
@@ -151,11 +174,37 @@
   }
 
   .chip {
-    @apply inline-flex min-h-10 cursor-pointer items-center rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-muted transition-colors;
+    @apply inline-flex min-h-11 cursor-pointer items-center rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-muted transition-colors;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .chip-active {
     @apply border-foreground bg-foreground text-background;
+  }
+
+  .chip-scroll {
+    position: relative;
+  }
+
+  .chip-scroll > div {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .chip-scroll > div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip-scroll::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0.5rem;
+    width: 2.5rem;
+    background: linear-gradient(to right, transparent, var(--background));
   }
 }
 

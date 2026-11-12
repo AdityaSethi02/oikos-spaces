@@ -1,5 +1,11 @@
 import type { IconType } from "react-icons";
-import { FaGoogle } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaGoogle,
+  FaInstagram,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa";
 import {
   LuApple,
   LuArrowLeft,
@@ -101,6 +107,10 @@ export const Icons = {
   Shower: LuShowerHead,
   Google: FaGoogle,
   Apple: LuApple,
+  Instagram: FaInstagram,
+  Facebook: FaFacebookF,
+  Youtube: FaYoutube,
+  WhatsApp: FaWhatsapp,
 } as const;
 
 export type AppIcon = (typeof Icons)[keyof typeof Icons];

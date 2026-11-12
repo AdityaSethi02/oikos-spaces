@@ -12,7 +12,7 @@ export default function LoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { showToast } = useToast();
-  const next = searchParams.get("next") || "/messages";
+  const next = searchParams.get("next") || "/properties";
   const [mode, setMode] = useState<"login" | "signup">(
     searchParams.get("mode") === "signup" ? "signup" : "login",
   );
@@ -31,8 +31,8 @@ export default function LoginContent() {
           </h1>
           <p className="mt-2 text-sm text-muted">
             {mode === "login"
-              ? "Sign in to manage bookings, messages, and saved stays."
-              : "Join to reserve stays, message the host, and save homes."}
+              ? "Sign in to manage saved properties and your account."
+              : "Create an account to save properties and request consultations."}
           </p>
 
           <div className="mt-8 space-y-3">
@@ -59,7 +59,7 @@ export default function LoginContent() {
             <Icons.ArrowRight className="h-4 w-4" aria-hidden />
           </button>
           <Link href="/admin" className="mt-3 block text-sm text-muted hover:text-foreground">
-            Host dashboard (demo)
+            Dealer dashboard (demo)
           </Link>
 
           <p className="mt-8 text-sm text-muted">

@@ -31,14 +31,14 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
   return (
     <div
       className={cn(
-        "relative z-10 rounded-xl border border-border bg-surface shadow-soft",
+        "relative z-20 overflow-visible rounded-xl border border-border bg-surface shadow-soft",
         variant === "hero" ? "p-3 sm:p-4" : "p-3",
         className,
       )}
     >
       <div
         className={cn(
-          "grid gap-3",
+          "grid gap-3 overflow-visible",
           variant === "hero"
             ? "sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_auto]"
             : "sm:grid-cols-2 lg:grid-cols-4",

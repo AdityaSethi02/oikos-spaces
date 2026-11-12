@@ -19,9 +19,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-foreground",
+    "bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent",
   secondary:
-    "bg-accent text-white hover:bg-accent/90 focus-visible:ring-accent",
+    "bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent",
   outline:
     "border border-border bg-surface text-foreground hover:bg-background focus-visible:ring-foreground",
   ghost:
@@ -51,8 +51,10 @@ export function buttonClasses({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex cursor-pointer items-center justify-center rounded-lg font-medium transition-colors",
+    "inline-flex cursor-pointer items-center justify-center rounded-lg font-medium transition-[color,background-color,border-color,box-shadow]",
     "touch-manipulation select-none",
+    /* Scale only on devices with real hover — active:scale cancels taps on many phones */
+    "[@media(hover:hover)_and_(pointer:fine)]:active:scale-[0.98]",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
     variants[variant],
@@ -100,6 +102,7 @@ interface ButtonLinkProps {
   disabled?: boolean;
   target?: string;
   rel?: string;
+  onClick?: () => void;
 }
 
 export function ButtonLink({
@@ -112,6 +115,7 @@ export function ButtonLink({
   disabled,
   target,
   rel,
+  onClick,
 }: ButtonLinkProps) {
   const classes = buttonClasses({ variant, size, fullWidth, className });
 
@@ -129,14 +133,14 @@ export function ButtonLink({
   const external = /^https?:\/\//.test(href) || href.startsWith("tel:");
   if (external) {
     return (
-      <a href={href} className={classes} target={target} rel={rel}>
+      <a href={href} className={classes} target={target} rel={rel} onClick={onClick}>
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={classes} target={target} rel={rel}>
+    <Link href={href} className={classes} target={target} rel={rel} onClick={onClick}>
       {children}
     </Link>
   );

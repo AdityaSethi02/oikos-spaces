@@ -72,6 +72,39 @@ export const reviews: Review[] = [
     published: true,
     isDemo: true,
   },
+  {
+    id: "rev-6",
+    guestName: "Priya Nair",
+    role: "NRI buyer · Dubai",
+    rating: 5,
+    comment:
+      "Bought a Fateh Sagar apartment entirely remotely. Video visits, paperwork updates, and honest answers made the process feel safe from overseas.",
+    date: "2026-08-20",
+    published: true,
+    isDemo: true,
+  },
+  {
+    id: "rev-7",
+    guestName: "Ankit Joshi",
+    role: "First-time buyer · Hiran Magri",
+    rating: 5,
+    comment:
+      "They explained RERA points and registration steps in plain language. We never felt rushed into a token.",
+    date: "2026-09-01",
+    published: true,
+    isDemo: true,
+  },
+  {
+    id: "rev-8",
+    guestName: "Neha & Kabir Shah",
+    role: "Homeowners · interiors referral",
+    rating: 4,
+    comment:
+      "After purchase they introduced a solid interior team and stayed available for society paperwork follow-ups. Rare to get that after-sales care.",
+    date: "2026-09-14",
+    published: true,
+    isDemo: true,
+  },
 ];
 
 export function getReviewsByPropertyId(propertyId: string): Review[] {

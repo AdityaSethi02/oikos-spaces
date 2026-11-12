@@ -138,9 +138,15 @@ function FavoriteButton({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onClick();
+      }}
+      onPointerDown={(event) => event.stopPropagation()}
       className={cn(
-        "flex h-11 w-11 items-center justify-center rounded-full bg-surface/95 shadow-sm backdrop-blur-sm transition-colors",
+        "relative z-10 flex h-11 w-11 items-center justify-center rounded-full bg-surface/95 shadow-sm backdrop-blur-sm touch-manipulation",
+        "transition-colors duration-200",
         active ? "text-red-500" : "text-muted hover:text-red-400",
       )}
       aria-label={active ? "Remove from favorites" : "Add to favorites"}

@@ -5,7 +5,6 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { brand, whatsappLink } from "@/lib/brand";
 import type { Property } from "@/data/mock/properties";
-import { getDealerChatHref } from "@/data/mock/conversations";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/providers/toast-provider";
 
@@ -18,7 +17,6 @@ interface EnquiryCardProps {
 export function EnquiryCard({ property, sticky = true, className }: EnquiryCardProps) {
   const { showToast } = useToast();
   const [visitOpen, setVisitOpen] = useState(false);
-  const chatHref = getDealerChatHref(property.id, property.slug);
   const wa = whatsappLink(
     `Hi, I'm interested in ${property.name} (${property.priceLabel}) at ${property.location}. Please share more details.`,
   );
@@ -57,8 +55,8 @@ export function EnquiryCard({ property, sticky = true, className }: EnquiryCardP
         <ButtonLink href={wa} variant="primary" fullWidth target="_blank" rel="noopener noreferrer">
           WhatsApp an advisor
         </ButtonLink>
-        <ButtonLink href={chatHref} variant="outline" fullWidth>
-          Message dealer
+        <ButtonLink href="/contact" variant="outline" fullWidth>
+          Book consultation
         </ButtonLink>
         <Button
           variant="ghost"
@@ -105,25 +103,24 @@ export function EnquiryCard({ property, sticky = true, className }: EnquiryCardP
 }
 
 export function MobileEnquiryBar({ property }: { property: Property }) {
-  const chatHref = getDealerChatHref(property.id, property.slug);
   const wa = whatsappLink(
     `Hi, I'm interested in ${property.name} (${property.priceLabel}).`,
   );
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 p-3 backdrop-blur-sm lg:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm lg:hidden">
       <div className="container-page flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <p className="truncate text-xs text-muted">{property.status}</p>
           <p className="font-serif text-lg text-foreground">{property.priceLabel}</p>
         </div>
-        <ButtonLink href={chatHref} variant="outline" size="sm" className="shrink-0">
-          Message
+        <ButtonLink href="/contact" variant="outline" size="sm" className="shrink-0 touch-manipulation">
+          Contact
         </ButtonLink>
         <ButtonLink
           href={wa}
           size="sm"
-          className="shrink-0"
+          className="shrink-0 touch-manipulation"
           target="_blank"
           rel="noopener noreferrer"
         >
