@@ -86,7 +86,7 @@ export function Footer() {
             © {new Date().getFullYear()} {brand.name}. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
-            Demo UI — prices and listings are placeholders
+            Property advisors in Udaipur
           </p>
         </div>
       </div>

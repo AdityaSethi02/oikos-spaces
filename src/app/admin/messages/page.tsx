@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { conversations } from "@/data/mock/conversations";
 import { useToast } from "@/components/providers/toast-provider";
 import { brand } from "@/lib/brand";
+import { Icons } from "@/components/icons";
 
 export default function AdminMessagesPage() {
   const [activeId, setActiveId] = useState(conversations[0]?.id);
@@ -67,9 +68,10 @@ export default function AdminMessagesPage() {
                   <button
                     type="button"
                     onClick={() => setMobileShowChat(false)}
-                    className="mb-1 text-sm text-muted hover:text-foreground md:hidden"
+                    className="mb-1 inline-flex items-center gap-1 text-sm text-muted hover:text-foreground md:hidden"
                   >
-                    ← Conversations
+                    <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+                    Conversations
                   </button>
                   <p className="truncate font-medium">{active.guestName}</p>
                   <p className="truncate text-xs text-muted">{active.propertyName}</p>

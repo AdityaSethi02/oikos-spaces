@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { brand, navigation } from "@/lib/brand";
+import { brand, navigation, whatsappLink } from "@/lib/brand";
+import { conversations } from "@/data/mock/conversations";
 import { cn } from "@/lib/utils";
 import { Drawer } from "@/components/ui/drawer";
 import { ButtonLink } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { Icons } from "@/components/icons";
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const unreadCount = conversations.filter((c) => c.unread).length;
 
   return (
     <>
@@ -25,7 +27,7 @@ export function Header() {
             <span className="font-serif text-lg tracking-wide text-foreground sm:text-xl">
               {brand.name}
             </span>
-            <span className="mt-0.5 hidden text-[10px] tracking-[0.2em] text-muted uppercase sm:block">
+            <span className="mt-0.5 hidden text-[10px] tracking-[0.18em] text-muted uppercase sm:block">
               {brand.tagline}
             </span>
           </Link>
@@ -57,13 +59,31 @@ export function Header() {
             </Link>
             <Link
               href="/messages"
-              className="flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
+              className="relative flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
               aria-label="Chat with dealer"
             >
               <Icons.Send className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
+              )}
             </Link>
-            <ButtonLink href="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
-              Sign in
+            <ButtonLink
+              href={whatsappLink()}
+              variant="secondary"
+              size="sm"
+              className="hidden sm:inline-flex"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              WhatsApp
+            </ButtonLink>
+            <ButtonLink
+              href={`tel:${brand.contact.phone.replace(/\s/g, "")}`}
+              variant="outline"
+              size="sm"
+              className="hidden md:inline-flex lg:hidden xl:inline-flex"
+            >
+              Call
             </ButtonLink>
             <button
               type="button"
@@ -110,8 +130,22 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <ButtonLink href="/login" fullWidth className="mt-4">
-            Sign in
+          <ButtonLink
+            href={whatsappLink()}
+            fullWidth
+            className="mt-4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp an advisor
+          </ButtonLink>
+          <ButtonLink
+            href={`tel:${brand.contact.phone.replace(/\s/g, "")}`}
+            variant="outline"
+            fullWidth
+            className="mt-2"
+          >
+            Call {brand.contact.phone}
           </ButtonLink>
         </nav>
       </Drawer>

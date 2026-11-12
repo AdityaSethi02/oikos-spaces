@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyImage } from "@/components/media/property-image";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { Card } from "@/components/ui/card";
 import type { Property } from "@/data/mock/properties";
@@ -50,11 +50,11 @@ export function BookingSummary({
       <div className={collapsible ? (open ? "mt-4 block" : "hidden lg:block") : ""}>
         {showProperty && (
           <div className="flex gap-4">
-            <div className="w-24 shrink-0 overflow-hidden rounded-lg">
-              <ImagePlaceholder
-                variant="property"
-                seed={property.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)}
-                className="rounded-lg aspect-square"
+            <div className="aspect-square w-24 shrink-0 overflow-hidden rounded-lg">
+              <PropertyImage
+                src={property.coverImage}
+                alt={property.name}
+                className="rounded-lg"
               />
             </div>
             <div>

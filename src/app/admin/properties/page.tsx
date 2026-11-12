@@ -1,4 +1,4 @@
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyImage } from "@/components/media/property-image";
 import { ButtonLink } from "@/components/ui/button";
 import { StatusBadge } from "@/components/property/property-meta";
 import { properties } from "@/data/mock/properties";
@@ -21,12 +21,8 @@ export default function AdminPropertiesPage() {
             key={p.id}
             className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-center"
           >
-            <div className="w-full shrink-0 overflow-hidden rounded-lg sm:w-32">
-              <ImagePlaceholder
-                variant="property"
-                seed={p.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)}
-                className="rounded-lg aspect-[4/3] sm:aspect-square"
-              />
+            <div className="aspect-[4/3] w-full shrink-0 overflow-hidden rounded-lg sm:aspect-square sm:w-32">
+              <PropertyImage src={p.coverImage} alt={p.name} className="rounded-lg" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">

@@ -53,9 +53,10 @@ export default function LoginContent() {
           <button
             type="button"
             onClick={continueDemo}
-            className="mt-6 block w-full text-sm text-accent hover:underline"
+            className="mt-6 inline-flex w-full items-center justify-center gap-1 text-sm text-accent hover:underline"
           >
-            Continue as demo guest →
+            Continue as demo guest
+            <Icons.ArrowRight className="h-4 w-4" aria-hidden />
           </button>
           <Link href="/admin" className="mt-3 block text-sm text-muted hover:text-foreground">
             Host dashboard (demo)

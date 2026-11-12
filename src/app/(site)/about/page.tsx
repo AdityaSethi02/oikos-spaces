@@ -1,6 +1,7 @@
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyImage } from "@/components/media/property-image";
 import { ButtonLink } from "@/components/ui/button";
 import { brand, whatsappLink } from "@/lib/brand";
+import { brandImages } from "@/lib/media";
 
 export const metadata = { title: "About" };
 
@@ -19,7 +20,14 @@ export default function AboutPage() {
 
       <section className="section-padding">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
-          <ImagePlaceholder variant="lifestyle" seed={0} label="Founder" />
+          <div className="aspect-[4/3] overflow-hidden rounded-xl">
+            <PropertyImage
+              src={brandImages.about}
+              alt={`${brand.founder.name} — ${brand.name}`}
+              className="rounded-xl"
+              priority
+            />
+          </div>
           <div>
             <p className="text-sm font-medium uppercase tracking-wider text-accent">
               Meet the founder
@@ -37,6 +45,25 @@ export default function AboutPage() {
               or a commercial space on Airport Road — we shortlist carefully and negotiate
               with your interests first.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding bg-surface">
+        <div className="container-page grid items-center gap-12 lg:grid-cols-2">
+          <div className="order-2 lg:order-1">
+            <h2 className="font-serif text-2xl">Rooted in Udaipur</h2>
+            <p className="mt-4 leading-relaxed text-muted">
+              From the lake belt to emerging residential corridors, we know the streets,
+              the paperwork, and the prices — so you don&apos;t have to learn the market alone.
+            </p>
+          </div>
+          <div className="order-1 aspect-[16/10] overflow-hidden rounded-xl lg:order-2">
+            <PropertyImage
+              src={brandImages.city}
+              alt="Udaipur cityscape"
+              className="rounded-xl"
+            />
           </div>
         </div>
       </section>

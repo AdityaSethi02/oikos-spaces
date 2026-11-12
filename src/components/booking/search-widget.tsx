@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { brand } from "@/lib/brand";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { localities, allListingStatuses, type ListingStatus } from "@/data/mock/properties";
 
@@ -43,53 +44,39 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
             : "sm:grid-cols-2 lg:grid-cols-4",
         )}
       >
-        <label className="block">
-          <span className="mb-1 block text-xs font-medium text-muted">Locality</span>
-          <select
-            value={locality}
-            onChange={(e) => setLocality(e.target.value)}
-            className="search-input"
-            aria-label="Locality"
-          >
-            <option value="All">All in {brand.location.split(",")[0]}</option>
-            {localities.map((l) => (
-              <option key={l} value={l}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-xs font-medium text-muted">Looking to</span>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as ListingStatus | "All")}
-            className="search-input"
-            aria-label="Listing status"
-          >
-            <option value="All">Buy / Rent / Lease</option>
-            {allListingStatuses.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-xs font-medium text-muted">Bedrooms</span>
-          <select
-            value={bedrooms}
-            onChange={(e) => setBedrooms(e.target.value)}
-            className="search-input"
-            aria-label="Bedrooms"
-          >
-            <option value="0">Any</option>
-            <option value="1">1+ BHK</option>
-            <option value="2">2+ BHK</option>
-            <option value="3">3+ BHK</option>
-            <option value="4">4+ BHK</option>
-          </select>
-        </label>
+        <Select
+          label="Locality"
+          aria-label="Locality"
+          value={locality}
+          onChange={setLocality}
+          options={[
+            { value: "All", label: `All in ${brand.location.split(",")[0]}` },
+            ...localities.map((l) => ({ value: l, label: l })),
+          ]}
+        />
+        <Select
+          label="Looking to"
+          aria-label="Listing status"
+          value={status}
+          onChange={(v) => setStatus(v as ListingStatus | "All")}
+          options={[
+            { value: "All", label: "Buy / Rent / Lease" },
+            ...allListingStatuses.map((s) => ({ value: s, label: s })),
+          ]}
+        />
+        <Select
+          label="Bedrooms"
+          aria-label="Bedrooms"
+          value={bedrooms}
+          onChange={setBedrooms}
+          options={[
+            { value: "0", label: "Any" },
+            { value: "1", label: "1+ BHK" },
+            { value: "2", label: "2+ BHK" },
+            { value: "3", label: "3+ BHK" },
+            { value: "4", label: "4+ BHK" },
+          ]}
+        />
         <div className="flex items-end">
           <Button fullWidth onClick={handleSearch}>
             Search

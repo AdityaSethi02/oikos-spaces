@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BookingSummary } from "@/components/booking/booking-summary";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Select } from "@/components/ui/select";
 import { getPropertyBySlug } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState } from "@/components/feedback/empty-state";
@@ -32,6 +33,7 @@ export default function PaymentContent() {
   const guests = Number(searchParams.get("guests") || 2);
 
   const [method, setMethod] = useState("upi");
+  const [bank, setBank] = useState("HDFC Bank");
   const [processing, setProcessing] = useState(false);
   const [failed, setFailed] = useState(searchParams.get("failed") === "1");
 
@@ -145,13 +147,19 @@ export default function PaymentContent() {
 
             {method === "netbanking" && (
               <Card>
-                <label htmlFor="bank" className="text-sm text-muted">Select bank (demo)</label>
-                <select id="bank" className="search-input mt-3">
-                  <option>HDFC Bank</option>
-                  <option>ICICI Bank</option>
-                  <option>SBI</option>
-                  <option>Axis Bank</option>
-                </select>
+                <p className="text-sm text-muted">Select bank (demo)</p>
+                <Select
+                  className="mt-3"
+                  aria-label="Select bank"
+                  value={bank}
+                  onChange={setBank}
+                  options={[
+                    { value: "HDFC Bank", label: "HDFC Bank" },
+                    { value: "ICICI Bank", label: "ICICI Bank" },
+                    { value: "SBI", label: "SBI" },
+                    { value: "Axis Bank", label: "Axis Bank" },
+                  ]}
+                />
               </Card>
             )}
 

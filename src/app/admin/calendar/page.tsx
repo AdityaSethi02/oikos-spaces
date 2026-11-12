@@ -4,10 +4,12 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { calendarEvents } from "@/data/mock/admin";
 import { properties } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
 import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
 
 type View = "month" | "week" | "list";
 type EventType = "confirmed" | "pending" | "blocked" | "checkin" | "checkout";
@@ -28,6 +30,8 @@ export default function AdminCalendarPage() {
   const [view, setView] = useState<View>("month");
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [blockModal, setBlockModal] = useState(false);
+  const [blockProperty, setBlockProperty] = useState(properties[0]?.id || "");
+  const [blockReason, setBlockReason] = useState("Personal use");
   const [anchor] = useState(new Date(2026, 8, 1));
   const { showToast } = useToast();
 
@@ -74,16 +78,16 @@ export default function AdminCalendarPage() {
             </button>
           ))}
         </div>
-        <select
+        <Select
+          className="w-auto min-w-[12rem]"
+          aria-label="Filter by property"
           value={propertyFilter}
-          onChange={(e) => setPropertyFilter(e.target.value)}
-          className="search-input w-auto"
-        >
-          <option value="all">All properties</option>
-          {properties.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
+          onChange={setPropertyFilter}
+          options={[
+            { value: "all", label: "All properties" },
+            ...properties.map((p) => ({ value: p.id, label: p.name })),
+          ]}
+        />
       </div>
 
       {view === "list" && (
@@ -92,9 +96,13 @@ export default function AdminCalendarPage() {
             <div key={event.id} className={cn("flex flex-col gap-2 rounded-xl border border-border p-4 sm:flex-row sm:items-center sm:justify-between", typeColors[event.type])}>
               <div>
                 <p className="font-medium">{event.title}</p>
-                <p className="text-sm opacity-80">
-                  {event.start} → {event.end}
-                  {"reason" in event && event.reason ? ` · ${event.reason}` : ""}
+                <p className="inline-flex flex-wrap items-center gap-1 text-sm opacity-80">
+                  <span>{event.start}</span>
+                  <Icons.ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span>{event.end}</span>
+                  {"reason" in event && event.reason ? (
+                    <span> · {event.reason}</span>
+                  ) : null}
                 </p>
               </div>
               <span className="text-xs font-medium uppercase">{event.type}</span>
@@ -163,25 +171,33 @@ export default function AdminCalendarPage() {
           }}
         >
           <div>
-            <label className="text-sm font-medium" htmlFor="block-property">Property</label>
-            <select id="block-property" className="search-input mt-1">
-              {properties.map((p) => (
-                <option key={p.id}>{p.name}</option>
-              ))}
-            </select>
+            <p className="text-sm font-medium">Property</p>
+            <Select
+              className="mt-1"
+              aria-label="Property"
+              value={blockProperty}
+              onChange={setBlockProperty}
+              options={properties.map((p) => ({ value: p.id, label: p.name }))}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input label="Start date" type="date" />
             <Input label="End date" type="date" />
           </div>
           <div>
-            <label className="text-sm font-medium" htmlFor="block-reason">Reason</label>
-            <select id="block-reason" className="search-input mt-1">
-              <option>Personal use</option>
-              <option>Maintenance</option>
-              <option>External booking</option>
-              <option>Other</option>
-            </select>
+            <p className="text-sm font-medium">Reason</p>
+            <Select
+              className="mt-1"
+              aria-label="Reason"
+              value={blockReason}
+              onChange={setBlockReason}
+              options={[
+                { value: "Personal use", label: "Personal use" },
+                { value: "Maintenance", label: "Maintenance" },
+                { value: "External booking", label: "External booking" },
+                { value: "Other", label: "Other" },
+              ]}
+            />
           </div>
           <Input label="Notes" placeholder="Optional notes" />
           <Button type="submit" fullWidth>Block dates</Button>

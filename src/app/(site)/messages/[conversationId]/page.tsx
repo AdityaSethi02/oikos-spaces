@@ -8,6 +8,7 @@ import { ChatWindow } from "@/components/chat/chat-window";
 import { conversations, getConversationById } from "@/data/mock/conversations";
 import { useToast } from "@/components/providers/toast-provider";
 import { brand } from "@/lib/brand";
+import { Icons } from "@/components/icons";
 
 export default function ConversationPage() {
   const params = useParams();
@@ -47,13 +48,17 @@ export default function ConversationPage() {
     <div className="flex h-[calc(100dvh-4rem)] flex-col lg:h-[calc(100dvh-4.5rem)]">
       <div className="border-b border-border px-4 py-3 lg:px-6">
         <div className="flex items-center gap-3">
-          <Link href="/messages" className="text-sm text-muted hover:text-foreground">
-            ← Messages
+          <Link
+            href="/messages"
+            className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
+          >
+            <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+            Messages
           </Link>
           <div className="min-w-0">
             <p className="truncate font-medium">{conversation.propertyName}</p>
             <p className="truncate text-xs text-muted">
-              Chat with {brand.hostName}
+              {brand.hostName} · typically replies within 1 hr
             </p>
           </div>
           <Link
@@ -73,7 +78,12 @@ export default function ConversationPage() {
           <ChatWindow
             messages={messages}
             onSend={handleSend}
-            placeholder="Ask the dealer about price, visit, or paperwork…"
+            placeholder="Ask about price, visit, or paperwork…"
+            quickReplies={[
+              "Is this still available?",
+              "Can we schedule a site visit?",
+              "What's the best price?",
+            ]}
             onAttach={(msg) => {
               setMessages((prev) => [
                 ...prev,

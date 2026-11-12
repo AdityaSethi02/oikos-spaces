@@ -42,8 +42,12 @@ export default function ContactHostContent() {
   return (
     <div className="section-padding">
       <div className="container-page max-w-4xl">
-        <Link href={`/stays/${slug}`} className="text-sm text-muted hover:text-foreground">
-          ← Back to property
+        <Link
+          href={`/stays/${slug}`}
+          className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
+        >
+          <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+          Back to property
         </Link>
 
         <h1 className="mt-4 font-serif text-3xl">Contact your host</h1>

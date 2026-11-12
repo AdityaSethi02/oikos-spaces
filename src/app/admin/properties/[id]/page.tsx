@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyImage } from "@/components/media/property-image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getPropertyById, type Amenity } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
+import { Icons } from "@/components/icons";
 
 const allAmenities: Amenity[] = [
   "Parking",
@@ -47,8 +48,12 @@ export default function AdminPropertyEditPage() {
 
   return (
     <div>
-      <Link href="/admin/properties" className="text-sm text-muted hover:text-foreground">
-        ← Properties
+      <Link
+        href="/admin/properties"
+        className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
+      >
+        <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+        Properties
       </Link>
       <h1 className="mt-4 font-serif text-2xl sm:text-3xl">Edit {property.name}</h1>
 
@@ -103,8 +108,10 @@ export default function AdminPropertyEditPage() {
         <Card>
           <h2 className="font-serif text-lg">Gallery</h2>
           <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-            {Array.from({ length: Math.min(property.galleryCount, 8) }).map((_, i) => (
-              <ImagePlaceholder key={i} variant="gallery-sm" seed={i} className="rounded-lg" />
+            {property.images.slice(0, 8).map((src, i) => (
+              <div key={src + i} className="aspect-square overflow-hidden rounded-lg">
+                <PropertyImage src={src} alt={`${property.name} ${i + 1}`} className="rounded-lg" />
+              </div>
             ))}
           </div>
         </Card>

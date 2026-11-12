@@ -6,6 +6,7 @@ import { FileAttachment } from "@/components/chat/file-attachment";
 import { getGuestById, documents } from "@/data/mock/admin";
 import { getBookingsWithProperty } from "@/data/mock/bookings";
 import { conversations } from "@/data/mock/conversations";
+import { Icons } from "@/components/icons";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -31,7 +32,13 @@ export default async function AdminGuestDetailPage({ params }: Props) {
 
   return (
     <div>
-      <Link href="/admin/guests" className="text-sm text-muted hover:text-foreground">← Guests</Link>
+      <Link
+        href="/admin/guests"
+        className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
+      >
+        <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+        Guests
+      </Link>
       <h1 className="mt-4 font-serif text-2xl sm:text-3xl">{guest.name}</h1>
       <p className="mt-1 text-sm text-muted">{guest.email} · {guest.phone}</p>
 

@@ -54,8 +54,12 @@ export default function BookContent() {
     <div className="section-padding">
       <div className="container-page">
         <nav className="text-sm text-muted">
-          <Link href={`/stays/${slug}`} className="hover:text-foreground">
-            ← Back to {property.name}
+          <Link
+            href={`/stays/${slug}`}
+            className="inline-flex items-center gap-1 hover:text-foreground"
+          >
+            <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+            Back to {property.name}
           </Link>
         </nav>
 

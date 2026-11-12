@@ -1,15 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { Select } from "@/components/ui/select";
+import { PropertyImage } from "@/components/media/property-image";
 import { brand, whatsappLink } from "@/lib/brand";
+import { brandImages } from "@/lib/media";
 import { useToast } from "@/components/providers/toast-provider";
 
 export default function ContactPage() {
   const { showToast } = useToast();
+  const [intent, setIntent] = useState("buy");
 
   return (
     <div className="section-padding">
@@ -80,7 +84,9 @@ export default function ContactPage() {
               </div>
             </Card>
 
-            <ImagePlaceholder variant="map" seed={0} label="Office map" />
+            <div className="aspect-[16/9] overflow-hidden rounded-xl">
+              <PropertyImage src={brandImages.map} alt="Office location map" className="rounded-xl" />
+            </div>
           </div>
 
           <Card>
@@ -96,15 +102,20 @@ export default function ContactPage() {
               <Input label="Phone" type="tel" placeholder="+91" required />
               <Input label="Email" type="email" placeholder="you@example.com" />
               <div>
-                <label className="mb-1.5 block text-sm font-medium" htmlFor="intent">
-                  I want to
-                </label>
-                <select id="intent" className="search-input" defaultValue="buy" required>
-                  <option value="buy">Buy a property</option>
-                  <option value="sell">Sell a property</option>
-                  <option value="rent">Rent / lease</option>
-                  <option value="other">Something else</option>
-                </select>
+                <p className="mb-1.5 text-sm font-medium">I want to</p>
+                <Select
+                  aria-label="I want to"
+                  name="intent"
+                  required
+                  value={intent}
+                  onChange={setIntent}
+                  options={[
+                    { value: "buy", label: "Buy a property" },
+                    { value: "sell", label: "Sell a property" },
+                    { value: "rent", label: "Rent / lease" },
+                    { value: "other", label: "Something else" },
+                  ]}
+                />
               </div>
               <Input label="Budget / expected price" placeholder="e.g. ₹1.5 Cr or ₹30,000/mo" />
               <Input label="Preferred locality" placeholder="e.g. Fateh Sagar, Old City" />

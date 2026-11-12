@@ -62,8 +62,7 @@ export default function ServicesPage() {
             </ButtonLink>
             <ButtonLink
               href={whatsappLink()}
-              variant="outline"
-              className="border-white/30 bg-transparent text-background hover:bg-white/10"
+              variant="inverse"
               target="_blank"
               rel="noopener noreferrer"
             >

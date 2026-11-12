@@ -16,7 +16,10 @@ import {
   type PropertyType,
   type ListingStatus,
 } from "@/data/mock/properties";
-import { formatCurrency } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
+import { formatCurrency, cn } from "@/lib/utils";
+
+type Intent = "All" | "For Sale" | "For Rent" | "For Lease";
 
 export function PropertiesContent() {
   const searchParams = useSearchParams();
@@ -27,10 +30,10 @@ export function PropertiesContent() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [maxPrice, setMaxPrice] = useState(4_00_00_000);
   const [minBedrooms, setMinBedrooms] = useState(initialBeds);
-  const [statuses, setStatuses] = useState<ListingStatus[]>(
+  const [intent, setIntent] = useState<Intent>(
     initialStatus && allListingStatuses.includes(initialStatus as ListingStatus)
-      ? [initialStatus as ListingStatus]
-      : [...allListingStatuses],
+      ? (initialStatus as Intent)
+      : "All",
   );
   const [types, setTypes] = useState<PropertyType[]>([...allPropertyTypes]);
   const [locality, setLocality] = useState<string>(initialLocality);
@@ -40,34 +43,24 @@ export function PropertiesContent() {
       properties.filter((p) => {
         if (p.price > maxPrice) return false;
         if (minBedrooms > 0 && p.bedrooms < minBedrooms) return false;
-        if (!statuses.includes(p.status)) return false;
+        if (intent !== "All" && p.status !== intent) return false;
         if (!types.includes(p.type)) return false;
         if (locality !== "All" && p.locality !== locality) return false;
         return true;
       }),
-    [maxPrice, minBedrooms, statuses, types, locality],
+    [maxPrice, minBedrooms, intent, types, locality],
   );
 
   const reset = () => {
     setMaxPrice(4_00_00_000);
     setMinBedrooms(0);
-    setStatuses([...allListingStatuses]);
+    setIntent("All");
     setTypes([...allPropertyTypes]);
     setLocality("All");
   };
 
-  const filterProps = {
-    maxPrice,
-    setMaxPrice,
-    minBedrooms,
-    setMinBedrooms,
-    statuses,
-    setStatuses,
-    types,
-    setTypes,
-    locality,
-    setLocality,
-  };
+  const intents: Intent[] = ["All", "For Sale", "For Rent", "For Lease"];
+  const topLocalities = ["All", ...localities.slice(0, 8)];
 
   return (
     <div className="section-padding">
@@ -79,11 +72,12 @@ export function PropertiesContent() {
           <span className="mx-2">/</span>
           <span className="text-foreground">Properties</span>
         </nav>
-        <div className="mb-8 mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+        <div className="mb-6 mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-serif text-3xl sm:text-4xl">Properties</h1>
             <p className="mt-2 text-muted">
-              Buy, rent or lease across Udaipur&apos;s trusted neighbourhoods.
+              Find homes, villas, plots and commercial spaces in Udaipur.
             </p>
           </div>
           <Button
@@ -92,24 +86,64 @@ export function PropertiesContent() {
             className="shrink-0 lg:hidden"
           >
             <Icons.Filter className="h-4 w-4" />
-            Filters
+            More filters
           </Button>
         </div>
 
-        <div className="flex gap-8">
+        {/* Primary intent */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {intents.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setIntent(item)}
+              className={cn("chip shrink-0", intent === item && "chip-active")}
+            >
+              {item === "All" ? "All listings" : item.replace("For ", "")}
+            </button>
+          ))}
+        </div>
+
+        {/* Locality chips */}
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+          {topLocalities.map((l) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLocality(l)}
+              className={cn(
+                "chip shrink-0",
+                locality === l && "chip-active",
+              )}
+            >
+              {l === "All" ? "All localities" : l}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 flex gap-8">
           <aside className="hidden w-64 shrink-0 lg:block">
-            <FilterPanel {...filterProps} />
+            <FilterPanel
+              maxPrice={maxPrice}
+              setMaxPrice={setMaxPrice}
+              minBedrooms={minBedrooms}
+              setMinBedrooms={setMinBedrooms}
+              types={types}
+              setTypes={setTypes}
+            />
           </aside>
 
           <div className="min-w-0 flex-1 space-y-6">
-            <p className="text-sm text-muted">
+            <p className="sticky top-16 z-20 -mx-1 bg-background/95 px-1 py-2 text-sm text-muted backdrop-blur-sm lg:top-[4.5rem]">
               {filtered.length} listing{filtered.length !== 1 ? "s" : ""}
+              {intent !== "All" ? ` · ${intent}` : ""}
+              {locality !== "All" ? ` · ${locality}` : ""}
             </p>
             {filtered.length === 0 ? (
               <EmptyState
                 title="No properties match these filters"
-                description="Try adjusting budget, type, or locality."
-                actionLabel="Reset filters"
+                description="Try another locality, budget, or listing type."
+                actionLabel="Clear filters"
                 onAction={reset}
               />
             ) : (
@@ -130,9 +164,16 @@ export function PropertiesContent() {
 
       <Drawer open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filters">
         <div className="p-4">
-          <FilterPanel {...filterProps} />
+          <FilterPanel
+            maxPrice={maxPrice}
+            setMaxPrice={setMaxPrice}
+            minBedrooms={minBedrooms}
+            setMinBedrooms={setMinBedrooms}
+            types={types}
+            setTypes={setTypes}
+          />
           <Button fullWidth className="mt-6" onClick={() => setFiltersOpen(false)}>
-            Apply filters
+            Show {filtered.length} listings
           </Button>
         </div>
       </Drawer>
@@ -145,27 +186,16 @@ function FilterPanel({
   setMaxPrice,
   minBedrooms,
   setMinBedrooms,
-  statuses,
-  setStatuses,
   types,
   setTypes,
-  locality,
-  setLocality,
 }: {
   maxPrice: number;
   setMaxPrice: (v: number) => void;
   minBedrooms: number;
   setMinBedrooms: (v: number) => void;
-  statuses: ListingStatus[];
-  setStatuses: (v: ListingStatus[]) => void;
   types: PropertyType[];
   setTypes: (v: PropertyType[]) => void;
-  locality: string;
-  setLocality: (v: string) => void;
 }) {
-  const toggleStatus = (s: ListingStatus) => {
-    setStatuses(statuses.includes(s) ? statuses.filter((x) => x !== s) : [...statuses, s]);
-  };
   const toggleType = (t: PropertyType) => {
     setTypes(types.includes(t) ? types.filter((x) => x !== t) : [...types, t]);
   };
@@ -184,66 +214,28 @@ function FilterPanel({
           step={25_000}
           value={maxPrice}
           onChange={(e) => setMaxPrice(Number(e.target.value))}
-          className="mt-2 w-full"
+          className="mt-2 w-full accent-[var(--accent)]"
         />
         <p className="mt-1 text-sm text-muted">Up to {formatCurrency(maxPrice)}</p>
       </div>
       <div>
-        <label className="text-sm font-medium" htmlFor="locality">
-          Locality
-        </label>
-        <select
-          id="locality"
-          value={locality}
-          onChange={(e) => setLocality(e.target.value)}
-          className="search-input mt-2"
-        >
-          <option value="All">All localities</option>
-          {localities.map((l) => (
-            <option key={l} value={l}>
-              {l}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label className="text-sm font-medium" htmlFor="min-beds">
-          Bedrooms
-        </label>
-        <select
-          id="min-beds"
-          value={minBedrooms}
-          onChange={(e) => setMinBedrooms(Number(e.target.value))}
-          className="search-input mt-2"
-        >
-          {[0, 1, 2, 3, 4].map((n) => (
-            <option key={n} value={n}>
-              {n === 0 ? "Any" : `${n}+ BHK`}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <p className="text-sm font-medium">Listing type</p>
-        <div className="mt-2 space-y-2">
-          {allListingStatuses.map((s) => (
-            <label key={s} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={statuses.includes(s)}
-                onChange={() => toggleStatus(s)}
-                className="rounded"
-              />
-              {s}
-            </label>
-          ))}
-        </div>
+        <p className="text-sm font-medium">Bedrooms</p>
+        <Select
+          className="mt-2"
+          aria-label="Bedrooms"
+          value={String(minBedrooms)}
+          onChange={(v) => setMinBedrooms(Number(v))}
+          options={[0, 1, 2, 3, 4].map((n) => ({
+            value: String(n),
+            label: n === 0 ? "Any" : `${n}+ BHK`,
+          }))}
+        />
       </div>
       <div>
         <p className="text-sm font-medium">Property type</p>
         <div className="mt-2 space-y-2">
           {allPropertyTypes.map((t) => (
-            <label key={t} className="flex items-center gap-2 text-sm">
+            <label key={t} className="flex min-h-11 items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={types.includes(t)}

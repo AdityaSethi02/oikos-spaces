@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyAmenities } from "@/components/property/property-amenities";
 import { EnquiryCard, MobileEnquiryBar } from "@/components/property/enquiry-card";
-import { ImagePlaceholder } from "@/components/media/image-placeholder";
+import { PropertyImage } from "@/components/media/property-image";
 import { PropertyActions } from "@/components/property/property-actions";
-import { PropertyMeta, StatusBadge } from "@/components/property/property-meta";
+import { PropertyMeta, StatusBadge, StarRating } from "@/components/property/property-meta";
 import { getPropertyBySlug } from "@/data/mock/properties";
 import { getReviewsByPropertyId } from "@/data/mock/reviews";
+import { brandImages } from "@/lib/media";
 import { Icons } from "@/components/icons";
-import { StarRating } from "@/components/property/property-meta";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -69,10 +69,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       </div>
 
       <div className="container-page">
-        <PropertyGallery
-          galleryCount={property.galleryCount}
-          propertyName={property.name}
-        />
+        <PropertyGallery images={property.images} propertyName={property.name} />
       </div>
 
       <div className="container-page mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12">
@@ -128,7 +125,9 @@ export default async function PropertyDetailPage({ params }: Props) {
           <section>
             <h2 className="font-serif text-xl">Location</h2>
             <p className="mt-2 text-sm text-muted">{property.address}</p>
-            <ImagePlaceholder variant="map" seed={0} className="mt-4" />
+            <div className="mt-4 aspect-[16/9] overflow-hidden rounded-xl">
+              <PropertyImage src={brandImages.map} alt={`Map near ${property.locality}`} className="rounded-xl" />
+            </div>
           </section>
 
           {reviews.length > 0 && (

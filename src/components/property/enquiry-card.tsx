@@ -1,11 +1,13 @@
 "use client";
 
-import { ButtonLink } from "@/components/ui/button";
+import { useState } from "react";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { brand, whatsappLink } from "@/lib/brand";
 import type { Property } from "@/data/mock/properties";
 import { getDealerChatHref } from "@/data/mock/conversations";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/providers/toast-provider";
 
 interface EnquiryCardProps {
   property: Property;
@@ -14,6 +16,8 @@ interface EnquiryCardProps {
 }
 
 export function EnquiryCard({ property, sticky = true, className }: EnquiryCardProps) {
+  const { showToast } = useToast();
+  const [visitOpen, setVisitOpen] = useState(false);
   const chatHref = getDealerChatHref(property.id, property.slug);
   const wa = whatsappLink(
     `Hi, I'm interested in ${property.name} (${property.priceLabel}) at ${property.location}. Please share more details.`,
@@ -21,11 +25,9 @@ export function EnquiryCard({ property, sticky = true, className }: EnquiryCardP
 
   return (
     <Card className={cn(sticky && "lg:sticky lg:top-24", className)}>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm text-muted">{property.status}</p>
-          <p className="mt-1 font-serif text-2xl text-foreground">{property.priceLabel}</p>
-        </div>
+      <div>
+        <p className="text-sm text-muted">{property.status}</p>
+        <p className="mt-1 font-serif text-3xl text-foreground">{property.priceLabel}</p>
       </div>
 
       <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
@@ -52,19 +54,51 @@ export function EnquiryCard({ property, sticky = true, className }: EnquiryCardP
       </dl>
 
       <div className="mt-6 space-y-3">
-        <ButtonLink href={chatHref} variant="primary" fullWidth>
+        <ButtonLink href={wa} variant="primary" fullWidth target="_blank" rel="noopener noreferrer">
+          WhatsApp an advisor
+        </ButtonLink>
+        <ButtonLink href={chatHref} variant="outline" fullWidth>
           Message dealer
         </ButtonLink>
-        <ButtonLink href={wa} variant="outline" fullWidth target="_blank" rel="noopener noreferrer">
-          WhatsApp
-        </ButtonLink>
-        <ButtonLink href={`tel:${brand.contact.phone.replace(/\s/g, "")}`} variant="ghost" fullWidth>
-          Call {brand.contact.phone}
-        </ButtonLink>
+        <Button
+          variant="ghost"
+          fullWidth
+          onClick={() => setVisitOpen((v) => !v)}
+        >
+          Schedule a site visit
+        </Button>
       </div>
 
+      {visitOpen && (
+        <form
+          className="mt-4 space-y-3 border-t border-border pt-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            showToast("Site visit request sent (demo).", "success");
+            setVisitOpen(false);
+          }}
+        >
+          <input
+            type="date"
+            required
+            className="search-input"
+            aria-label="Preferred visit date"
+          />
+          <input
+            type="tel"
+            required
+            placeholder="Your phone"
+            className="search-input"
+            aria-label="Phone"
+          />
+          <Button type="submit" fullWidth size="sm">
+            Request visit
+          </Button>
+        </form>
+      )}
+
       <p className="mt-4 text-center text-xs text-muted">
-        Chat with our advisors about this listing
+        Usually replies within an hour · {brand.contact.hours}
       </p>
     </Card>
   );
@@ -72,16 +106,28 @@ export function EnquiryCard({ property, sticky = true, className }: EnquiryCardP
 
 export function MobileEnquiryBar({ property }: { property: Property }) {
   const chatHref = getDealerChatHref(property.id, property.slug);
+  const wa = whatsappLink(
+    `Hi, I'm interested in ${property.name} (${property.priceLabel}).`,
+  );
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 p-3 backdrop-blur-sm lg:hidden">
-      <div className="container-page flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm text-muted">{property.status}</p>
-          <p className="font-semibold text-foreground">{property.priceLabel}</p>
+      <div className="container-page flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs text-muted">{property.status}</p>
+          <p className="font-serif text-lg text-foreground">{property.priceLabel}</p>
         </div>
-        <ButtonLink href={chatHref} size="sm" className="shrink-0">
+        <ButtonLink href={chatHref} variant="outline" size="sm" className="shrink-0">
           Message
+        </ButtonLink>
+        <ButtonLink
+          href={wa}
+          size="sm"
+          className="shrink-0"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp
         </ButtonLink>
       </div>
     </div>

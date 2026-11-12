@@ -1,3 +1,5 @@
+import { listingImageSets } from "@/lib/media";
+
 export type ListingStatus = "For Sale" | "For Rent" | "For Lease";
 
 export type PropertyType =
@@ -44,7 +46,20 @@ export interface Property {
   highlights: string[];
   featured: boolean;
   isDemo: true;
+  /** Cover / card thumbnail */
+  coverImage: string;
+  /** Full gallery (includes cover as first item) */
+  images: string[];
   galleryCount: number;
+}
+
+function withImages(urls: readonly string[]) {
+  const images = [...urls];
+  return {
+    coverImage: images[0],
+    images,
+    galleryCount: images.length,
+  };
 }
 
 export const properties: Property[] = [
@@ -80,7 +95,7 @@ export const properties: Property[] = [
     highlights: ["Lake view", "Covered parking", "Ready to move"],
     featured: true,
     isDemo: true,
-    galleryCount: 12,
+    ...withImages(listingImageSets.lakeApartment),
   },
   {
     id: "prop-2",
@@ -112,7 +127,7 @@ export const properties: Property[] = [
     highlights: ["Private courtyard", "Heritage architecture", "Ghat proximity"],
     featured: true,
     isDemo: true,
-    galleryCount: 16,
+    ...withImages(listingImageSets.heritage),
   },
   {
     id: "prop-3",
@@ -146,7 +161,7 @@ export const properties: Property[] = [
     highlights: ["Independent villa", "Garden lawns", "Family friendly"],
     featured: true,
     isDemo: true,
-    galleryCount: 18,
+    ...withImages(listingImageSets.villa),
   },
   {
     id: "prop-4",
@@ -178,7 +193,7 @@ export const properties: Property[] = [
     highlights: ["Ready to move", "CBD access", "Lift"],
     featured: true,
     isDemo: true,
-    galleryCount: 10,
+    ...withImages(listingImageSets.cityApartment),
   },
   {
     id: "prop-5",
@@ -203,7 +218,7 @@ export const properties: Property[] = [
     highlights: ["Corner plot", "Clear title", "Planned sector"],
     featured: false,
     isDemo: true,
-    galleryCount: 6,
+    ...withImages(listingImageSets.plot),
   },
   {
     id: "prop-6",
@@ -228,7 +243,7 @@ export const properties: Property[] = [
     highlights: ["High visibility", "Ground floor", "Parking apron"],
     featured: false,
     isDemo: true,
-    galleryCount: 8,
+    ...withImages(listingImageSets.commercial),
   },
   {
     id: "prop-7",
@@ -262,7 +277,7 @@ export const properties: Property[] = [
     highlights: ["Furnished", "Family preferred", "Reserved parking"],
     featured: true,
     isDemo: true,
-    galleryCount: 9,
+    ...withImages(listingImageSets.rental),
   },
   {
     id: "prop-8",
@@ -287,7 +302,7 @@ export const properties: Property[] = [
     highlights: ["Ready office", "Cabins + open bay", "Power backup"],
     featured: false,
     isDemo: true,
-    galleryCount: 7,
+    ...withImages(listingImageSets.office),
   },
   {
     id: "prop-9",
@@ -320,7 +335,7 @@ export const properties: Property[] = [
     highlights: ["Premium finish", "Lake belt", "Investment potential"],
     featured: true,
     isDemo: true,
-    galleryCount: 14,
+    ...withImages(listingImageSets.lakePremium),
   },
   {
     id: "prop-10",
@@ -354,7 +369,7 @@ export const properties: Property[] = [
     highlights: ["Gated community", "Clubhouse", "4 BHK villa"],
     featured: false,
     isDemo: true,
-    galleryCount: 15,
+    ...withImages(listingImageSets.gatedVilla),
   },
 ];
 

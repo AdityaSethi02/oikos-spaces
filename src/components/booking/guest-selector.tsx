@@ -1,5 +1,7 @@
 "use client";
 
+import { Select } from "@/components/ui/select";
+
 interface GuestSelectorProps {
   value: number;
   onChange: (value: number) => void;
@@ -18,22 +20,15 @@ export function GuestSelector({
   id = "guests",
 }: GuestSelectorProps) {
   return (
-    <div>
-      <label htmlFor={id} className="text-xs font-medium text-muted">
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="search-input mt-1"
-      >
-        {Array.from({ length: max - min + 1 }, (_, i) => min + i).map((n) => (
-          <option key={n} value={n}>
-            {n} guest{n !== 1 ? "s" : ""}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Select
+      id={id}
+      label={label}
+      value={String(value)}
+      onChange={(v) => onChange(Number(v))}
+      options={Array.from({ length: max - min + 1 }, (_, i) => min + i).map((n) => ({
+        value: String(n),
+        label: `${n} guest${n !== 1 ? "s" : ""}`,
+      }))}
+    />
   );
 }

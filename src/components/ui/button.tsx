@@ -2,7 +2,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { type ButtonHTMLAttributes, type ReactNode, forwardRef } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "inverse";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,6 +28,9 @@ const variants: Record<ButtonVariant, string> = {
     "text-foreground hover:bg-background focus-visible:ring-foreground",
   danger:
     "bg-error text-white hover:bg-error/90 focus-visible:ring-error",
+  /** For dark backgrounds — light border + light text */
+  inverse:
+    "border border-white/40 bg-transparent text-white hover:bg-white/10 focus-visible:ring-white",
 };
 
 const sizes: Record<ButtonSize, string> = {
@@ -42,10 +51,10 @@ export function buttonClasses({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex items-center justify-center rounded-lg font-medium transition-colors",
+    "inline-flex cursor-pointer items-center justify-center rounded-lg font-medium transition-colors",
     "touch-manipulation select-none",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    "disabled:pointer-events-none disabled:opacity-50",
+    "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
     variants[variant],
     sizes[size],
     fullWidth && "w-full",
@@ -110,7 +119,7 @@ export function ButtonLink({
     return (
       <span
         aria-disabled="true"
-        className={cn(classes, "pointer-events-none opacity-50")}
+        className={cn(classes, "pointer-events-none cursor-not-allowed opacity-50")}
       >
         {children}
       </span>

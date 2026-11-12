@@ -7,6 +7,7 @@ import { ChatWindow } from "@/components/chat/chat-window";
 import { createEnquiryConversation } from "@/data/mock/conversations";
 import { useToast } from "@/components/providers/toast-provider";
 import { brand } from "@/lib/brand";
+import { Icons } from "@/components/icons";
 
 export function NewEnquiryContent() {
   const searchParams = useSearchParams();
@@ -47,8 +48,12 @@ export function NewEnquiryContent() {
     <div className="flex h-[calc(100dvh-4rem)] flex-col lg:h-[calc(100dvh-4.5rem)]">
       <div className="border-b border-border px-4 py-3 lg:px-6">
         <div className="flex items-center gap-3">
-          <Link href="/messages" className="text-sm text-muted hover:text-foreground">
-            ← Messages
+          <Link
+            href="/messages"
+            className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
+          >
+            <Icons.ArrowLeft className="h-4 w-4" aria-hidden />
+            Messages
           </Link>
           <div className="min-w-0">
             <p className="truncate font-medium">{seed.propertyName}</p>
@@ -68,6 +73,11 @@ export function NewEnquiryContent() {
           messages={messages}
           onSend={handleSend}
           placeholder="Ask about price, paperwork, or a site visit…"
+          quickReplies={[
+            "Is this still available?",
+            "Can we schedule a site visit?",
+            "Share more photos please",
+          ]}
           onAttach={(msg) => {
             setMessages((prev) => [
               ...prev,

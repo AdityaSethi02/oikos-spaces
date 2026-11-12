@@ -15,6 +15,7 @@ interface ChatWindowProps {
   onAttach?: (message: ChatMessage) => void;
   placeholder?: string;
   showIdUpload?: boolean;
+  quickReplies?: string[];
 }
 
 export function ChatWindow({
@@ -23,15 +24,17 @@ export function ChatWindow({
   onAttach,
   placeholder = "Type a message…",
   showIdUpload = false,
+  quickReplies = [],
 }: ChatWindowProps) {
   const [input, setInput] = useState("");
   const [attachOpen, setAttachOpen] = useState(false);
   const [idOpen, setIdOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    onSend?.(input);
+  const handleSend = (value?: string) => {
+    const text = (value ?? input).trim();
+    if (!text) return;
+    onSend?.(text);
     setInput("");
   };
 
@@ -58,6 +61,20 @@ export function ChatWindow({
         ))}
       </div>
       <div className="border-t border-border p-4">
+        {quickReplies.length > 0 && (
+          <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+            {quickReplies.map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                onClick={() => handleSend(reply)}
+                className="chip shrink-0 whitespace-nowrap text-xs"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex items-end gap-2">
           <div className="relative">
             <button
@@ -121,9 +138,9 @@ export function ChatWindow({
             }}
             placeholder={placeholder}
             rows={1}
-            className="min-h-[44px] flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
+            className="min-h-[44px] flex-1 resize-none rounded-lg border border-border bg-surface px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
           />
-          <Button onClick={handleSend} size="md" className="shrink-0 px-3 sm:px-5" aria-label="Send message">
+          <Button onClick={() => handleSend()} size="md" className="shrink-0 px-3 sm:px-5" aria-label="Send message">
             <Icons.Send className="h-4 w-4 sm:hidden" />
             <span className="hidden sm:inline">Send</span>
           </Button>

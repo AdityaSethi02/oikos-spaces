@@ -1,8 +1,8 @@
 export const brand = {
   name: "RealEstate Firm",
-  tagline: "Buy · Sell · Rent",
+  tagline: "Buy · Sell · Rent in Udaipur",
   hostName: "Dealer Desk",
-  hostTitle: "Property dealer",
+  hostTitle: "Property advisor",
   location: "Udaipur, Rajasthan, India",
   founder: {
     name: "Rajesh Mehta",
@@ -45,13 +45,13 @@ export const navigation = {
 } as const;
 
 export const colors = {
-  background: "#FDFCF9",
+  background: "#F4F6F5",
   surface: "#FFFFFF",
-  foreground: "#1C1917",
-  muted: "#78716C",
-  border: "#E7E5E4",
-  accent: "#A67C52",
-  accentLight: "#F5EDE4",
+  foreground: "#15202B",
+  muted: "#5C6B73",
+  border: "#D8E0E3",
+  accent: "#0F6B5C",
+  accentLight: "#E6F3F0",
   success: "#15803D",
   warning: "#B45309",
   error: "#B91C1C",

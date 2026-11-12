@@ -37,9 +37,20 @@ export function StarRating({
   );
 }
 
+const statusStyles: Record<ListingStatus, string> = {
+  "For Sale": "bg-accent-light text-accent",
+  "For Rent": "bg-blue-50 text-blue-700",
+  "For Lease": "bg-violet-50 text-violet-700",
+};
+
 export function StatusBadge({ status }: { status: ListingStatus }) {
   return (
-    <span className="inline-flex rounded-md bg-accent-light px-2 py-0.5 text-xs font-medium text-accent">
+    <span
+      className={cn(
+        "inline-flex rounded-md px-2 py-0.5 text-xs font-semibold tracking-wide",
+        statusStyles[status],
+      )}
+    >
       {status}
     </span>
   );
