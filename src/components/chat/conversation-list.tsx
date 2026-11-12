@@ -12,6 +12,8 @@ interface ConversationListProps {
   activeFilter?: string;
   onFilterChange?: (filter: string) => void;
   onSelect?: (id: string) => void;
+  /** buyer: show property name; dealer: show enquirer name */
+  perspective?: "buyer" | "dealer";
 }
 
 export function ConversationList({
@@ -22,6 +24,7 @@ export function ConversationList({
   activeFilter,
   onFilterChange,
   onSelect,
+  perspective = "buyer",
 }: ConversationListProps) {
   return (
     <div className="flex h-full flex-col">
@@ -55,7 +58,7 @@ export function ConversationList({
                   activeId === conv.id && "bg-accent-light/40",
                 )}
               >
-                <ConversationItem conv={conv} />
+                <ConversationItem conv={conv} perspective={perspective} />
               </button>
             ) : (
               <Link
@@ -65,7 +68,7 @@ export function ConversationList({
                   activeId === conv.id && "bg-accent-light/40",
                 )}
               >
-                <ConversationItem conv={conv} />
+                <ConversationItem conv={conv} perspective={perspective} />
               </Link>
             )}
           </li>
@@ -75,16 +78,26 @@ export function ConversationList({
   );
 }
 
-function ConversationItem({ conv }: { conv: Conversation }) {
+function ConversationItem({
+  conv,
+  perspective,
+}: {
+  conv: Conversation;
+  perspective: "buyer" | "dealer";
+}) {
   return (
     <>
       <div className="flex items-start justify-between gap-2">
-        <p className="font-medium text-foreground">{conv.guestName}</p>
+        <p className="font-medium text-foreground">
+          {perspective === "dealer" ? conv.guestName : conv.propertyName}
+        </p>
         {conv.unread && (
           <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="Unread" />
         )}
       </div>
-      <p className="mt-0.5 text-xs text-muted">{conv.propertyName}</p>
+      <p className="mt-0.5 text-xs text-muted">
+        {perspective === "dealer" ? conv.propertyName : "Dealer Desk"}
+      </p>
       <p className="mt-2 line-clamp-1 text-sm text-muted">{conv.lastMessage}</p>
     </>
   );

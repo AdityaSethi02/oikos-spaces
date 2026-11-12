@@ -1,37 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { BookingCard } from "@/components/booking/booking-card";
-import { getPropertyBySlug } from "@/data/mock/properties";
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
-export default function AvailabilityPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const property = getPropertyBySlug(slug);
+export async function generateStaticParams() {
+  const { properties } = await import("@/data/mock/properties");
+  return properties.map((p) => ({ slug: p.slug }));
+}
 
-  if (!property) {
-    return (
-      <div className="container-page section-padding">
-        <p>Property not found</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="section-padding">
-      <div className="container-page max-w-2xl">
-        <Link href={`/stays/${slug}`} className="text-sm text-muted hover:text-foreground">
-          ← Back to {property.name}
-        </Link>
-        <h1 className="mt-4 font-serif text-3xl">Select dates</h1>
-        <p className="mt-2 text-muted">
-          Choose check-in and check-out to see availability and a price estimate. You won&apos;t be charged yet.
-        </p>
-        <div className="mt-8">
-          <BookingCard property={property} sticky={false} />
-        </div>
-      </div>
-    </div>
-  );
+export default async function AvailabilityRedirect({ params }: Props) {
+  const { slug } = await params;
+  redirect(`/properties/${slug}`);
 }

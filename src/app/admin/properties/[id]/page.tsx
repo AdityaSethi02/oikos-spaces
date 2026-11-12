@@ -12,8 +12,20 @@ import { getPropertyById, type Amenity } from "@/data/mock/properties";
 import { useToast } from "@/components/providers/toast-provider";
 
 const allAmenities: Amenity[] = [
-  "Wi-Fi", "Kitchen", "Parking", "TV", "Workspace", "Balcony",
-  "Air conditioning", "Hot water", "Self check-in", "Washing machine", "Garden", "Rooftop terrace",
+  "Parking",
+  "Lift",
+  "Power backup",
+  "Gated community",
+  "Security",
+  "Garden",
+  "Balcony",
+  "Air conditioning",
+  "Modular kitchen",
+  "Servant room",
+  "Clubhouse",
+  "Swimming pool",
+  "Wi-Fi",
+  "Furnished",
 ];
 
 export default function AdminPropertyEditPage() {
@@ -45,9 +57,11 @@ export default function AdminPropertyEditPage() {
           <h2 className="font-serif text-lg">Basic information</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Input label="Name" defaultValue={property.name} />
+            <Input label="Locality" defaultValue={property.locality} />
             <Input label="Location" defaultValue={property.location} />
-            <Input label="Address" defaultValue={property.address} className="sm:col-span-2" />
+            <Input label="Status" defaultValue={property.status} />
             <Input label="Property type" defaultValue={property.type} />
+            <Input label="Address" defaultValue={property.address} className="sm:col-span-2" />
           </div>
           <div className="mt-4">
             <Textarea label="Description" defaultValue={property.about} rows={4} />
@@ -55,22 +69,13 @@ export default function AdminPropertyEditPage() {
         </Card>
 
         <Card>
-          <h2 className="font-serif text-lg">Capacity</h2>
+          <h2 className="font-serif text-lg">Specs & pricing</h2>
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Input label="Guests" type="number" defaultValue={String(property.guests)} />
             <Input label="Bedrooms" type="number" defaultValue={String(property.bedrooms)} />
-            <Input label="Beds" type="number" defaultValue={String(property.beds)} />
             <Input label="Bathrooms" type="number" defaultValue={String(property.bathrooms)} />
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="font-serif text-lg">Pricing</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <Input label="Base price/night" type="number" defaultValue={String(property.pricePerNight)} />
-            <Input label="Weekend price" type="number" defaultValue={String(property.weekendPrice)} />
-            <Input label="Seasonal price (demo)" type="number" placeholder="Optional" />
-            <Input label="Cleaning fee" type="number" defaultValue={String(property.cleaningFee)} />
+            <Input label="Area (sq.ft)" type="number" defaultValue={String(property.areaSqFt)} />
+            <Input label="Price (INR)" type="number" defaultValue={String(property.price)} />
+            <Input label="Price label" defaultValue={property.priceLabel} className="sm:col-span-2" />
           </div>
         </Card>
 
@@ -96,66 +101,20 @@ export default function AdminPropertyEditPage() {
         </Card>
 
         <Card>
-          <h2 className="font-serif text-lg">House rules</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Input label="Check-in" defaultValue={property.checkIn} />
-            <Input label="Check-out" defaultValue={property.checkOut} />
-            <Input label="Quiet hours" defaultValue="10:00 PM – 8:00 AM" />
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {["Smoking indoors", "Pets", "Parties / events"].map((rule) => (
-              <label key={rule} className="flex items-center gap-2 text-sm">
-                <input type="checkbox" className="rounded" />
-                Allow {rule.toLowerCase()}
-              </label>
+          <h2 className="font-serif text-lg">Gallery</h2>
+          <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {Array.from({ length: Math.min(property.galleryCount, 8) }).map((_, i) => (
+              <ImagePlaceholder key={i} variant="gallery-sm" seed={i} className="rounded-lg" />
             ))}
           </div>
         </Card>
 
-        <Card>
-          <h2 className="font-serif text-lg">Media</h2>
-          <p className="mt-2 text-sm text-muted">Drag photos here to add (demo — files are not uploaded)</p>
-          <div
-            className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              showToast("Media added (demo)", "success");
-            }}
-          >
-            {Array.from({ length: 4 }).map((_, i) => (
-              <ImagePlaceholder key={i} variant="gallery-sm" seed={i} />
-            ))}
-            <div className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-sm text-muted">
-              + Add photo
-            </div>
-            <ImagePlaceholder variant="video" seed={0} className="aspect-square" label="Video" />
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="font-serif text-lg">Availability</h2>
-          <p className="mt-2 text-sm text-muted">Use the host calendar to block dates or review occupancy.</p>
-          <ButtonLink href="/admin/calendar" variant="outline" size="sm" className="mt-4">
-            Open calendar
+        <div className="flex flex-wrap gap-3">
+          <Button onClick={() => showToast("Listing saved (demo).", "success")}>Save changes</Button>
+          <ButtonLink href={`/properties/${property.slug}`} variant="outline">
+            View public listing
           </ButtonLink>
-        </Card>
-
-        <Card>
-          <h2 className="font-serif text-lg">Cancellation policy</h2>
-          <select className="search-input mt-4" defaultValue="flexible">
-            <option value="flexible">Flexible (demo)</option>
-            <option value="moderate">Moderate (demo)</option>
-            <option value="strict">Strict (demo)</option>
-          </select>
-          <Textarea className="mt-4" label="Policy notes" defaultValue={property.cancellationPolicy} rows={3} />
-        </Card>
-
-        <Button
-          onClick={() => showToast("Property saved (demo)", "success")}
-        >
-          Save changes
-        </Button>
+        </div>
       </div>
     </div>
   );

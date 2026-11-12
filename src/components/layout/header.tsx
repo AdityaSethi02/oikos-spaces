@@ -51,20 +51,20 @@ export function Header() {
             <Link
               href="/favorites"
               className="flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
-              aria-label="Favorites"
+              aria-label="Saved properties"
             >
               <Icons.Heart className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/messages"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground"
+              aria-label="Chat with dealer"
+            >
+              <Icons.Send className="h-5 w-5" />
             </Link>
             <ButtonLink href="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
               Sign in
             </ButtonLink>
-            <Link
-              href="/bookings"
-              className="hidden h-11 w-11 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-foreground md:flex"
-              aria-label="Account"
-            >
-              <Icons.User className="h-5 w-5" />
-            </Link>
             <button
               type="button"
               className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground hover:bg-surface lg:hidden"

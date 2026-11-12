@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { properties } from "@/data/mock/properties";
 import { Icons } from "@/components/icons";
+import { whatsappLink } from "@/lib/brand";
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites();
@@ -15,13 +16,13 @@ export default function FavoritesPage() {
     return (
       <div className="section-padding">
         <div className="container-page">
-          <h1 className="font-serif text-3xl">Saved stays</h1>
+          <h1 className="font-serif text-3xl">Saved properties</h1>
           <EmptyState
             className="mt-10"
-            title="You haven't saved any stays yet"
-            description="Tap the heart on any property to save it for later."
-            actionLabel="Explore stays"
-            actionHref="/stays"
+            title="You haven't saved any properties yet"
+            description="Tap the heart on any listing to save it for later."
+            actionLabel="Browse properties"
+            actionHref="/properties"
             icon={<Icons.Heart className="h-6 w-6" />}
           />
         </div>
@@ -32,14 +33,25 @@ export default function FavoritesPage() {
   return (
     <div className="section-padding">
       <div className="container-page">
-        <h1 className="font-serif text-3xl">Saved stays</h1>
-        <p className="mt-2 text-muted">{saved.length} saved propert{saved.length !== 1 ? "ies" : "y"}</p>
+        <h1 className="font-serif text-3xl">Saved properties</h1>
+        <p className="mt-2 text-muted">
+          {saved.length} saved propert{saved.length !== 1 ? "ies" : "y"}
+        </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {saved.map((property) => (
             <div key={property.id} className="space-y-3">
               <PropertyCard property={property} />
-              <ButtonLink href={`/stays/${property.slug}/availability`} variant="outline" size="sm" fullWidth>
-                Check availability
+              <ButtonLink
+                href={whatsappLink(
+                  `Hi, I'm interested in ${property.name} (${property.priceLabel}).`,
+                )}
+                variant="outline"
+                size="sm"
+                fullWidth
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Enquire on WhatsApp
               </ButtonLink>
             </div>
           ))}

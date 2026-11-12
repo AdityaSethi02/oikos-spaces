@@ -14,7 +14,7 @@ export default function NotFound() {
         </p>
         <div className="mt-8 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:w-auto sm:flex-row">
           <ButtonLink href="/">Go home</ButtonLink>
-          <ButtonLink href="/stays" variant="outline">Browse stays</ButtonLink>
+          <ButtonLink href="/properties" variant="outline">Browse properties</ButtonLink>
         </div>
       </div>
       <Footer />

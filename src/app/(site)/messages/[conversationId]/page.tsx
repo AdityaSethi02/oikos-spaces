@@ -7,6 +7,7 @@ import { ConversationList } from "@/components/chat/conversation-list";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { conversations, getConversationById } from "@/data/mock/conversations";
 import { useToast } from "@/components/providers/toast-provider";
+import { brand } from "@/lib/brand";
 
 export default function ConversationPage() {
   const params = useParams();
@@ -31,15 +32,15 @@ export default function ConversationPage() {
       ...prev,
       {
         id: `new-${Date.now()}`,
-        senderId: "guest",
+        senderId: "buyer",
         senderName: "You",
-        senderRole: "guest" as const,
+        senderRole: "buyer" as const,
         type: "text" as const,
         content,
         timestamp: new Date().toISOString(),
       },
     ]);
-    showToast("Message sent (demo)", "success");
+    showToast("Message sent to dealer (demo)", "success");
   };
 
   return (
@@ -51,8 +52,16 @@ export default function ConversationPage() {
           </Link>
           <div className="min-w-0">
             <p className="truncate font-medium">{conversation.propertyName}</p>
-            <p className="truncate text-xs text-muted">Conversation with host</p>
+            <p className="truncate text-xs text-muted">
+              Chat with {brand.hostName}
+            </p>
           </div>
+          <Link
+            href={`/properties/${conversation.propertySlug}`}
+            className="ml-auto shrink-0 text-sm text-accent hover:underline"
+          >
+            View listing
+          </Link>
         </div>
       </div>
 
@@ -64,10 +73,13 @@ export default function ConversationPage() {
           <ChatWindow
             messages={messages}
             onSend={handleSend}
-            showIdUpload
+            placeholder="Ask the dealer about price, visit, or paperwork…"
             onAttach={(msg) => {
-              setMessages((prev) => [...prev, msg]);
-              showToast("Attachment added (demo)", "success");
+              setMessages((prev) => [
+                ...prev,
+                { ...msg, senderRole: "buyer", senderName: "You" },
+              ]);
+              showToast("Attachment sent (demo)", "success");
             }}
           />
         </div>

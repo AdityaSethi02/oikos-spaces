@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
-import { StarRating, PropertyMeta } from "@/components/property/property-meta";
+import { PropertyMeta, StatusBadge } from "@/components/property/property-meta";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Icons } from "@/components/icons";
 import type { Property } from "@/data/mock/properties";
-import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface PropertyCardProps {
@@ -25,28 +24,28 @@ export function PropertyCard({
   className,
 }: PropertyCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
-  // Derive a stable numeric seed from the property id string
   const seed = property.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const href = `/properties/${property.slug}`;
 
   if (layout === "horizontal") {
     return (
       <Card padding="none" hover className={cn("overflow-hidden", className)}>
         <div className="flex flex-col sm:flex-row">
-          <Link
-            href={`/stays/${property.slug}`}
-            className="relative block w-full shrink-0 sm:w-72 lg:w-80"
-          >
+          <Link href={href} className="relative block w-full shrink-0 sm:w-72 lg:w-80">
             <ImagePlaceholder
               variant="property"
               seed={seed}
               className="aspect-[4/3] rounded-none rounded-t-xl sm:aspect-auto sm:h-full sm:rounded-l-xl sm:rounded-tr-none"
             />
+            <div className="absolute left-3 top-3">
+              <StatusBadge status={property.status} />
+            </div>
           </Link>
           <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
             <div>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <Link href={`/stays/${property.slug}`}>
+                  <Link href={href}>
                     <h3 className="font-serif text-xl text-foreground hover:text-accent">
                       {property.name}
                     </h3>
@@ -65,25 +64,15 @@ export function PropertyCard({
               </p>
               <PropertyMeta
                 className="mt-3"
-                guests={property.guests}
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
+                areaSqFt={property.areaSqFt}
               />
-              <div className="mt-3">
-                <StarRating
-                  rating={property.rating}
-                  reviewCount={property.reviewCount}
-                />
-              </div>
+              <p className="mt-2 text-xs text-muted-foreground">{property.type}</p>
             </div>
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-foreground">
-                <span className="font-semibold">
-                  {formatCurrency(property.pricePerNight)}
-                </span>
-                <span className="text-sm text-muted"> / night</span>
-              </p>
-              <ButtonLink href={`/stays/${property.slug}`} variant="outline" size="sm">
+              <p className="font-semibold text-foreground">{property.priceLabel}</p>
+              <ButtonLink href={href} variant="outline" size="sm">
                 View details
               </ButtonLink>
             </div>
@@ -96,13 +85,16 @@ export function PropertyCard({
   return (
     <Card padding="none" hover className={cn("group overflow-hidden", className)}>
       <div className="relative">
-        <Link href={`/stays/${property.slug}`} className="block">
+        <Link href={href} className="block">
           <ImagePlaceholder
             variant="property"
             seed={seed}
             className="rounded-none rounded-t-xl transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </Link>
+        <div className="absolute left-3 top-3 z-10">
+          <StatusBadge status={property.status} />
+        </div>
         {showFavorite && (
           <div className="absolute right-3 top-3 z-10">
             <FavoriteButton
@@ -113,7 +105,7 @@ export function PropertyCard({
         )}
       </div>
       <div className="p-4 sm:p-5">
-        <Link href={`/stays/${property.slug}`}>
+        <Link href={href}>
           <h3 className="font-serif text-lg text-foreground group-hover:text-accent">
             {property.name}
           </h3>
@@ -122,21 +114,13 @@ export function PropertyCard({
         <p className="mt-1 text-xs text-muted-foreground">{property.type}</p>
         <PropertyMeta
           className="mt-2"
-          guests={property.guests}
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}
+          areaSqFt={property.areaSqFt}
         />
-        <div className="mt-3">
-          <StarRating rating={property.rating} reviewCount={property.reviewCount} />
-        </div>
         <div className="mt-4 flex items-center justify-between gap-3">
-          <p className="text-foreground">
-            <span className="font-semibold">
-              {formatCurrency(property.pricePerNight)}
-            </span>
-            <span className="text-sm text-muted"> / night</span>
-          </p>
-          <ButtonLink href={`/stays/${property.slug}`} variant="outline" size="sm">
+          <p className="font-semibold text-foreground">{property.priceLabel}</p>
+          <ButtonLink href={href} variant="outline" size="sm">
             View
           </ButtonLink>
         </div>

@@ -1,18 +1,15 @@
-import { Suspense } from "react";
-import { PageLoading } from "@/components/feedback/page-loading";
-import ContactHostContent from "./contact-host-content";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Contact host" };
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
 export async function generateStaticParams() {
   const { properties } = await import("@/data/mock/properties");
-  return properties.map((property) => ({ slug: property.slug }));
+  return properties.map((p) => ({ slug: p.slug }));
 }
 
-export default function ContactHostPage() {
-  return (
-    <Suspense fallback={<PageLoading label="Loading inquiry" />}>
-      <ContactHostContent />
-    </Suspense>
-  );
+export default async function ContactHostRedirect({ params }: Props) {
+  await params;
+  redirect("/contact");
 }

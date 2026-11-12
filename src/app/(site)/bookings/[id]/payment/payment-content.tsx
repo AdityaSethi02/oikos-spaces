@@ -45,9 +45,9 @@ export default function PaymentContent() {
 
   const nights = calculateNights(checkIn, checkOut);
   const { total } = calculateBookingTotal(
-    property.pricePerNight,
+    Math.max(1000, Math.round(property.price / 30)),
     nights,
-    property.cleaningFee,
+    800,
   );
 
   const handlePay = () => {

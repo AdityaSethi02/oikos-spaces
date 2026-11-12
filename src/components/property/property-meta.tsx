@@ -1,5 +1,6 @@
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import type { ListingStatus } from "@/data/mock/properties";
 
 export function StarRating({
   rating,
@@ -25,7 +26,7 @@ export function StarRating({
           size === "sm" ? "text-sm" : "text-base",
         )}
       >
-        {rating.toFixed(2)}
+        {rating.toFixed(1)}
       </span>
       {reviewCount !== undefined && (
         <span className="text-sm text-muted">
@@ -36,25 +37,39 @@ export function StarRating({
   );
 }
 
+export function StatusBadge({ status }: { status: ListingStatus }) {
+  return (
+    <span className="inline-flex rounded-md bg-accent-light px-2 py-0.5 text-xs font-medium text-accent">
+      {status}
+    </span>
+  );
+}
+
 export function PropertyMeta({
-  guests,
   bedrooms,
   bathrooms,
-  beds,
+  areaSqFt,
   className,
 }: {
-  guests: number;
   bedrooms: number;
   bathrooms: number;
-  beds?: number;
+  areaSqFt?: number;
   className?: string;
 }) {
+  const parts: string[] = [];
+  if (bedrooms > 0) {
+    parts.push(`${bedrooms} BHK`);
+  }
+  if (bathrooms > 0) {
+    parts.push(`${bathrooms} bath${bathrooms !== 1 ? "s" : ""}`);
+  }
+  if (areaSqFt !== undefined && areaSqFt > 0) {
+    parts.push(`${areaSqFt.toLocaleString("en-IN")} sq.ft`);
+  }
+
   return (
     <p className={cn("text-sm text-muted", className)}>
-      {guests} guest{guests !== 1 ? "s" : ""} · {bedrooms} bedroom
-      {bedrooms !== 1 ? "s" : ""}
-      {beds !== undefined ? ` · ${beds} bed${beds !== 1 ? "s" : ""}` : ""} · {bathrooms} bath
-      {bathrooms !== 1 ? "s" : ""}
+      {parts.join(" · ") || "Details on request"}
     </p>
   );
 }

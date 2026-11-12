@@ -38,9 +38,9 @@ export function ChatWindow({
   const handleFile = (file: File, type: ChatMessage["type"]) => {
     onAttach?.({
       id: `att-${Date.now()}`,
-      senderId: "guest",
+      senderId: "buyer",
       senderName: "You",
-      senderRole: "guest",
+      senderRole: "buyer",
       type,
       content: file.name,
       fileName: file.name,
@@ -153,19 +153,19 @@ function MessageBubble({ message }: { message: ChatMessage }) {
     );
   }
 
-  const isGuest = message.senderRole === "guest";
+  const isBuyer = message.senderRole === "buyer";
 
   return (
-    <div className={cn("flex", isGuest ? "justify-end" : "justify-start")}>
+    <div className={cn("flex", isBuyer ? "justify-end" : "justify-start")}>
       <div
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 sm:max-w-[70%]",
-          isGuest
+          isBuyer
             ? "bg-stone-200/80 text-foreground"
             : "border border-border bg-surface text-foreground",
         )}
       >
-        {!isGuest && message.senderRole === "host" && (
+        {!isBuyer && message.senderRole === "dealer" && (
           <p className="mb-1 text-xs font-medium text-accent">{message.senderName}</p>
         )}
         {message.type === "document" || message.type === "image" ? (

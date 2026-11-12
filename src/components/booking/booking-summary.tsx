@@ -5,7 +5,7 @@ import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { PriceBreakdown } from "@/components/booking/price-breakdown";
 import { Card } from "@/components/ui/card";
 import type { Property } from "@/data/mock/properties";
-import { calculateNights, formatCurrency, formatDateRange } from "@/lib/utils";
+import { calculateNights, formatDateRange } from "@/lib/utils";
 import { useState } from "react";
 
 interface BookingSummaryProps {
@@ -17,6 +17,7 @@ interface BookingSummaryProps {
   collapsible?: boolean;
 }
 
+/** Legacy stay booking summary — kept for demo booking routes. */
 export function BookingSummary({
   property,
   checkIn,
@@ -27,6 +28,8 @@ export function BookingSummary({
 }: BookingSummaryProps) {
   const nights = calculateNights(checkIn, checkOut);
   const [open, setOpen] = useState(!collapsible);
+  // Approximate nightly rate from listing price for legacy booking demos
+  const nightly = Math.max(1_000, Math.round(property.price / 30));
 
   return (
     <Card>
@@ -37,9 +40,9 @@ export function BookingSummary({
           className="flex w-full items-center justify-between text-left lg:hidden"
           aria-expanded={open}
         >
-          <span className="font-medium">Your stay</span>
+          <span className="font-medium">Summary</span>
           <span className="text-sm text-muted">
-            {formatCurrency(property.pricePerNight * nights)} · {open ? "Hide" : "Show"}
+            {property.priceLabel} · {open ? "Hide" : "Show"}
           </span>
         </button>
       )}
@@ -48,11 +51,15 @@ export function BookingSummary({
         {showProperty && (
           <div className="flex gap-4">
             <div className="w-24 shrink-0 overflow-hidden rounded-lg">
-              <ImagePlaceholder variant="property" seed={property.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)} className="rounded-lg aspect-square" />
+              <ImagePlaceholder
+                variant="property"
+                seed={property.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0)}
+                className="rounded-lg aspect-square"
+              />
             </div>
             <div>
               <Link
-                href={`/stays/${property.slug}`}
+                href={`/properties/${property.slug}`}
                 className="font-serif text-lg hover:text-accent"
               >
                 {property.name}
@@ -75,14 +82,14 @@ export function BookingSummary({
             <span className="text-muted">Nights</span>
             <span>{nights}</span>
           </div>
+          <div className="flex justify-between">
+            <span className="text-muted">Listed at</span>
+            <span>{property.priceLabel}</span>
+          </div>
         </div>
 
         <div className="mt-5">
-          <PriceBreakdown
-            pricePerNight={property.pricePerNight}
-            nights={nights}
-            cleaningFee={property.cleaningFee}
-          />
+          <PriceBreakdown pricePerNight={nightly} nights={nights} cleaningFee={800} />
         </div>
       </div>
     </Card>

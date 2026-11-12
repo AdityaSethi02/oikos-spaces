@@ -100,17 +100,27 @@ export const Icons = {
 export type AppIcon = (typeof Icons)[keyof typeof Icons];
 
 export const amenityIcons: Record<string, IconType> = {
-  "Wi-Fi": Icons.Wifi,
-  Kitchen: Icons.Kitchen,
   Parking: Icons.Car,
-  TV: Icons.Tv,
-  Workspace: Icons.Laptop,
+  Lift: Icons.Building,
+  "Power backup": Icons.Landmark,
+  "Gated community": Icons.Lock,
+  Security: Icons.Key,
+  Garden: Icons.Trees,
   Balcony: Icons.Flower,
   "Air conditioning": Icons.Snowflake,
+  "Modular kitchen": Icons.Kitchen,
+  "Servant room": Icons.House,
+  Clubhouse: Icons.Sparkles,
+  "Swimming pool": Icons.Droplets,
+  "Wi-Fi": Icons.Wifi,
+  Furnished: Icons.Bed,
+  // legacy stay amenities (kept for older screens)
+  Kitchen: Icons.Kitchen,
+  TV: Icons.Tv,
+  Workspace: Icons.Laptop,
   "Hot water": Icons.Shower,
   "Self check-in": Icons.Key,
   "Washing machine": Icons.WashingMachine,
-  Garden: Icons.Trees,
   "Rooftop terrace": Icons.Building,
 };
 

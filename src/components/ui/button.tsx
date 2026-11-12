@@ -89,6 +89,8 @@ interface ButtonLinkProps {
   fullWidth?: boolean;
   className?: string;
   disabled?: boolean;
+  target?: string;
+  rel?: string;
 }
 
 export function ButtonLink({
@@ -99,28 +101,33 @@ export function ButtonLink({
   fullWidth,
   className,
   disabled,
+  target,
+  rel,
 }: ButtonLinkProps) {
+  const classes = buttonClasses({ variant, size, fullWidth, className });
+
   if (disabled) {
     return (
       <span
         aria-disabled="true"
-        className={buttonClasses({
-          variant,
-          size,
-          fullWidth,
-          className: cn("pointer-events-none opacity-50", className),
-        })}
+        className={cn(classes, "pointer-events-none opacity-50")}
       >
         {children}
       </span>
     );
   }
 
+  const external = /^https?:\/\//.test(href) || href.startsWith("tel:");
+  if (external) {
+    return (
+      <a href={href} className={classes} target={target} rel={rel}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className={buttonClasses({ variant, size, fullWidth, className })}
-    >
+    <Link href={href} className={classes} target={target} rel={rel}>
       {children}
     </Link>
   );

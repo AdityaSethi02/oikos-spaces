@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 function hideFooter(pathname: string) {
+  if (/^\/properties\/[^/]+$/.test(pathname)) return true;
   if (/^\/stays\/[^/]+$/.test(pathname)) return true;
   if (/^\/messages\/[^/]+$/.test(pathname)) return true;
   return false;

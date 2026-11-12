@@ -1,48 +1,60 @@
 import { ImagePlaceholder } from "@/components/media/image-placeholder";
 import { ButtonLink } from "@/components/ui/button";
-import { brand } from "@/lib/brand";
+import { brand, whatsappLink } from "@/lib/brand";
 
-export const metadata = { title: "About Us" };
+export const metadata = { title: "About" };
 
 export default function AboutPage() {
   return (
     <div>
       <section className="section-padding bg-accent-light/20">
         <div className="container-page max-w-3xl text-center">
-          <h1 className="font-serif text-4xl sm:text-5xl">Our story</h1>
+          <h1 className="font-serif text-4xl sm:text-5xl">About {brand.name}</h1>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            {brand.name} was born from a simple belief: that travel should feel personal,
-            warm, and rooted in place. We are not a marketplace — we are a small hospitality
-            team hosting a curated collection of homes in Udaipur.
+            We are a Udaipur real-estate firm helping families, investors and tenants buy,
+            sell, rent and lease with clarity — not marketplace noise.
           </p>
         </div>
       </section>
 
       <section className="section-padding">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
-          <ImagePlaceholder variant="lifestyle" seed={0} label="Our hospitality" />
+          <ImagePlaceholder variant="lifestyle" seed={0} label="Founder" />
           <div>
-            <h2 className="font-serif text-3xl">Personally hosted</h2>
+            <p className="text-sm font-medium uppercase tracking-wider text-accent">
+              Meet the founder
+            </p>
+            <h2 className="mt-2 font-serif text-3xl">{brand.founder.name}</h2>
+            <p className="mt-1 text-muted">{brand.founder.title}</p>
             <p className="mt-4 leading-relaxed text-muted">
-              Every property is owned and managed by us. When you stay with {brand.name},
-              you are our guest — not a transaction on a platform. We greet you, guide you,
-              and ensure your stay feels effortless from booking to checkout.
+              With {brand.founder.experienceYears}+ years in Udaipur&apos;s property market and{" "}
+              {brand.founder.clientsServed.toLocaleString("en-IN")}+ clients served,{" "}
+              {brand.founder.name.split(" ")[0]} built {brand.name} on trust, transparent
+              pricing advice, and end-to-end support from first site visit to registration.
+            </p>
+            <p className="mt-4 leading-relaxed text-muted">
+              Whether you need a lake-belt apartment, a heritage haveli, a plot to build on,
+              or a commercial space on Airport Road — we shortlist carefully and negotiate
+              with your interests first.
             </p>
           </div>
         </div>
       </section>
 
       <section className="section-padding bg-surface">
-        <div className="container-page grid items-center gap-12 lg:grid-cols-2">
-          <div className="lg:order-2">
-            <ImagePlaceholder variant="lifestyle" seed={1} label="Thoughtful design" />
-          </div>
-          <div className="lg:order-1">
-            <h2 className="font-serif text-3xl">Thoughtfully designed</h2>
+        <div className="container-page grid gap-10 md:grid-cols-2">
+          <div>
+            <h2 className="font-serif text-2xl">Our vision</h2>
             <p className="mt-4 leading-relaxed text-muted">
-              Each home reflects a distinct character — bohemian warmth, Mediterranean grace,
-              or minimal luxury. We collaborate with local artisans, source regional materials,
-              and design spaces that honour Udaipur&apos;s heritage while offering modern comfort.
+              To be Udaipur&apos;s most trusted real-estate partner — the first name people
+              think of when buying, selling or renting property.
+            </p>
+          </div>
+          <div>
+            <h2 className="font-serif text-2xl">Our mission</h2>
+            <p className="mt-4 leading-relaxed text-muted">
+              Make every property journey simple, safe and rewarding through local knowledge,
+              verified listings and honest advice.
             </p>
           </div>
         </div>
@@ -50,15 +62,24 @@ export default function AboutPage() {
 
       <section className="section-padding">
         <div className="container-page text-center">
-          <h2 className="font-serif text-3xl">Udaipur, our home</h2>
+          <h2 className="font-serif text-3xl">Looking for a property partner?</h2>
           <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-muted">
-            The City of Lakes has a way of slowing time. We live here, and we share it with
-            guests who seek beauty, culture, and genuine connection. Our properties are
-            doorways into the rhythm of this remarkable city.
+            Tell us your budget, locality and timeline — we&apos;ll come back with a shortlist.
           </p>
-          <ButtonLink href="/stays" size="lg" className="mt-8">
-            Explore our homes
-          </ButtonLink>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <ButtonLink href="/properties" size="lg">
+              Browse properties
+            </ButtonLink>
+            <ButtonLink
+              href={whatsappLink()}
+              variant="outline"
+              size="lg"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              WhatsApp us
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </div>

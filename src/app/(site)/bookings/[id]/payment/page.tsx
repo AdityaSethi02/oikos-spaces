@@ -1,18 +1,15 @@
-import { Suspense } from "react";
-import { PageLoading } from "@/components/feedback/page-loading";
-import PaymentContent from "./payment-content";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Payment" };
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
 export async function generateStaticParams() {
   const { bookings } = await import("@/data/mock/bookings");
-  return bookings.map((booking) => ({ id: booking.id }));
+  return bookings.map((b) => ({ id: b.id }));
 }
 
-export default function PaymentPage() {
-  return (
-    <Suspense fallback={<PageLoading label="Loading payment" />}>
-      <PaymentContent />
-    </Suspense>
-  );
+export default async function PaymentRedirect({ params }: Props) {
+  void (await params);
+  redirect("/messages");
 }

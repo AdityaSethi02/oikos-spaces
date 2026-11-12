@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { brand, navigation } from "@/lib/brand";
+import { brand, navigation, whatsappLink } from "@/lib/brand";
 
 export function Footer() {
   return (
@@ -11,8 +11,7 @@ export function Footer() {
               {brand.name}
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-              {brand.tagline}. Thoughtfully designed spaces in Udaipur, hosted
-              with care.
+              {brand.tagline}. Local advice for buying, selling and renting property in Udaipur.
             </p>
           </div>
 
@@ -36,7 +35,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-              Guest
+              Account
             </h3>
             <ul className="mt-4 space-y-2.5">
               {navigation.guest.map((item) => (
@@ -67,6 +66,16 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5 text-sm text-muted">
               <li>{brand.contact.email}</li>
               <li>{brand.contact.phone}</li>
+              <li>
+                <a
+                  href={whatsappLink()}
+                  className="hover:text-foreground"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp
+                </a>
+              </li>
               <li>{brand.location}</li>
             </ul>
           </div>
@@ -77,7 +86,7 @@ export function Footer() {
             © {new Date().getFullYear()} {brand.name}. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
-            Demo UI — prices and policies are placeholders
+            Demo UI — prices and listings are placeholders
           </p>
         </div>
       </div>

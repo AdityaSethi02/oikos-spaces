@@ -12,7 +12,7 @@ export default function LoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { showToast } = useToast();
-  const next = searchParams.get("next") || "/bookings";
+  const next = searchParams.get("next") || "/messages";
   const [mode, setMode] = useState<"login" | "signup">(
     searchParams.get("mode") === "signup" ? "signup" : "login",
   );

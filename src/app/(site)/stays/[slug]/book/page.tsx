@@ -1,18 +1,15 @@
-import { Suspense } from "react";
-import { PageLoading } from "@/components/feedback/page-loading";
-import BookContent from "./book-content";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Checkout" };
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
 export async function generateStaticParams() {
   const { properties } = await import("@/data/mock/properties");
-  return properties.map((property) => ({ slug: property.slug }));
+  return properties.map((p) => ({ slug: p.slug }));
 }
 
-export default function BookPage() {
-  return (
-    <Suspense fallback={<PageLoading label="Loading checkout" />}>
-      <BookContent />
-    </Suspense>
-  );
+export default async function BookRedirect({ params }: Props) {
+  const { slug } = await params;
+  redirect(`/properties/${slug}`);
 }
