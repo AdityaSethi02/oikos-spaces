@@ -1,8 +1,6 @@
 export const brand = {
   name: "RealEstate Firm",
   tagline: "Buy · Sell · Rent in Udaipur",
-  hostName: "Dealer Desk",
-  hostTitle: "Property advisor",
   location: "Udaipur, Rajasthan, India",
   founder: {
     name: "Rajesh Mehta",
@@ -83,23 +81,12 @@ export const navigation = {
     { label: "Testimonials", href: "/testimonials" },
     { label: "Contact", href: "/contact" },
   ],
-  /** Extra company links (footer / future) — keep empty when all sit in main */
-  company: [] as { label: string; href: string }[],
   guest: [{ label: "Saved", href: "/favorites" }],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
   ],
-  admin: [
-    { label: "Dashboard", href: "/admin" },
-    { label: "Properties", href: "/admin/properties" },
-    { label: "Messages", href: "/admin/messages" },
-    { label: "Settings", href: "/admin/settings" },
-  ],
 } as const;
-
-/** @deprecated Use `colors` from `@/lib/themes` — re-exported for compatibility */
-export { colors, ACTIVE_THEME_INDEX, themes } from "@/lib/themes";
 
 export function whatsappLink(message?: string) {
   const phone = brand.contact.whatsapp.replace(/\D/g, "");

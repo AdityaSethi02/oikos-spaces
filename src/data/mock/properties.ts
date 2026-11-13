@@ -377,10 +377,6 @@ export function getPropertyBySlug(slug: string): Property | undefined {
   return properties.find((p) => p.slug === slug);
 }
 
-export function getPropertyById(id: string): Property | undefined {
-  return properties.find((p) => p.id === id);
-}
-
 export function getFeaturedProperties(): Property[] {
   return properties.filter((p) => p.featured);
 }

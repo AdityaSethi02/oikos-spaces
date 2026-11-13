@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -58,10 +57,6 @@ export default function LoginContent() {
             Continue as demo guest
             <Icons.ArrowRight className="h-4 w-4" aria-hidden />
           </button>
-          <Link href="/admin" className="mt-3 block text-sm text-muted hover:text-foreground">
-            Dealer dashboard (demo)
-          </Link>
-
           <p className="mt-8 text-sm text-muted">
             {mode === "login" ? "New here?" : "Already have an account?"}{" "}
             <button

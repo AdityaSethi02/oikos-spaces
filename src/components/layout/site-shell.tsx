@@ -6,9 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
 
 function hideFooter(pathname: string) {
-  if (/^\/properties\/[^/]+$/.test(pathname)) return true;
-  if (/^\/stays\/[^/]+$/.test(pathname)) return true;
-  return false;
+  return /^\/properties\/[^/]+$/.test(pathname);
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {

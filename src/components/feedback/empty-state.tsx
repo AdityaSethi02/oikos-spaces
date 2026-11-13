@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
 import type { ReactNode } from "react";
 
 interface EmptyStateProps {
@@ -60,26 +59,6 @@ export function LoadingSkeleton({ className }: { className?: string }) {
         className,
       )}
       aria-hidden="true"
-    />
-  );
-}
-
-export function ErrorState({
-  title = "Something went wrong",
-  description = "Please try again later.",
-  onRetry,
-}: {
-  title?: string;
-  description?: string;
-  onRetry?: () => void;
-}) {
-  return (
-    <EmptyState
-      title={title}
-      description={description}
-      icon={<Icons.Warning className="h-6 w-6" />}
-      actionLabel={onRetry ? "Try again" : undefined}
-      onAction={onRetry}
     />
   );
 }

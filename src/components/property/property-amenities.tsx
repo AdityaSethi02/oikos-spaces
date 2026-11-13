@@ -37,22 +37,3 @@ export function PropertyAmenities({
     </div>
   );
 }
-
-export function AmenityPills({ amenities }: { amenities: string[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {amenities.slice(0, 5).map((a) => {
-        const Icon = amenityIcons[a] || Icons.Check;
-        return (
-          <span
-            key={a}
-            className="inline-flex items-center gap-1.5 rounded-md bg-surface-elevated px-2.5 py-1 text-xs text-muted"
-          >
-            <Icon className="h-3.5 w-3.5 text-support" aria-hidden />
-            {a}
-          </span>
-        );
-      })}
-    </div>
-  );
-}

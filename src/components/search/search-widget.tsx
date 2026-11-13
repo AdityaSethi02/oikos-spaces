@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { brand } from "@/lib/brand";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { localities, allListingStatuses, type ListingStatus } from "@/data/mock/properties";
@@ -83,17 +83,6 @@ export function SearchWidget({ variant = "hero", className }: SearchWidgetProps)
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-export function SearchWidgetCompact({ className }: { className?: string }) {
-  return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      <SearchWidget variant="inline" className="min-w-0 flex-1" />
-      <ButtonLink href="/properties" variant="outline" size="sm" className="shrink-0">
-        All properties
-      </ButtonLink>
     </div>
   );
 }

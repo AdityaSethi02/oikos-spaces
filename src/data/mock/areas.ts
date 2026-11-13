@@ -107,23 +107,10 @@ export function getAreaBySlug(slug: string): Area | undefined {
   return areas.find((a) => a.slug === slug);
 }
 
-export function getAreaByName(name: string): Area | undefined {
-  return areas.find((a) => a.name.toLowerCase() === name.toLowerCase());
-}
-
 export function getListingCountForArea(name: string): number {
   return properties.filter((p) => p.locality === name).length;
 }
 
 export function getPropertiesForArea(name: string) {
   return properties.filter((p) => p.locality === name);
-}
-
-export function localityToSlug(locality: string): string {
-  const match = areas.find((a) => a.name === locality);
-  if (match) return match.slug;
-  return locality
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 }

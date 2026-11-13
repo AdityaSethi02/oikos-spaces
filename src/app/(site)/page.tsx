@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PropertyImage } from "@/components/media/property-image";
 import { PropertyCard } from "@/components/property/property-card";
-import { SearchWidget } from "@/components/booking/search-widget";
+import { SearchWidget } from "@/components/search/search-widget";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { PartnersStrip } from "@/components/marketing/partners-strip";
 import { Reveal } from "@/components/motion/reveal";
